@@ -1,11 +1,3 @@
--- 1. Khởi tạo Database
-IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'fella_db')
-    CREATE DATABASE fella_db;
-GO
-
-USE fella_db;
-GO
-
 -- Bảng 1: USERS
 CREATE TABLE IF NOT EXISTS users (
     id INT IDENTITY(1,1) PRIMARY KEY,
