@@ -36,10 +36,11 @@ cd backend
 npm install
 * **Bước 3:** Tạo Database trống trên SQL Server
 * **Bước 4:** Tạo file .env 
-PORT=5000
-
-DB_USER=sa
-DB_PASSWORD=matsau_sql_cua_ban
-DB_SERVER=localhost
-DB_DATABASE=ten_db_cua_ban
+```env
+  PORT=5000
+  DB_USER=sa
+  DB_PASSWORD=matsau_sql_cua_ban
+  DB_SERVER=localhost
+  DB_DATABASE=ten_db_cua_ban
+```
 * **Bước 5:** Tại backend chạy npm start
