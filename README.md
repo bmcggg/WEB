@@ -29,17 +29,21 @@
 ### 3. Cài đặt
 
 * **Bước 1:** Clone dự án về máy
+```
 git clone <URL_REPOSITORY>
 cd <TEN_THU_MUC_DU_AN>
+```
 * **Bước 2:** Cài đặt các thư viện phụ thuộc
+```
 cd backend
 npm install
+```
 * **Bước 3:** Tạo Database trống trên SQL Server
 * **Bước 4:** Tạo file .env 
 ```env
   PORT=5000
   DB_USER=sa
-  DB_PASSWORD=matsau_sql_cua_ban
+  DB_PASSWORD=matkhau_sql_cua_ban
   DB_SERVER=localhost
   DB_DATABASE=ten_db_cua_ban
 ```
