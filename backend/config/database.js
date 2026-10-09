@@ -1,14 +1,14 @@
 const sql = require('mssql');
 
 const config = {
-    user: process.env.DB_USER || 'sa',
-    password: process.env.DB_PASSWORD || '123456',
-    server: process.env.DB_SERVER || 'localhost',
-    database: process.env.DB_DATABASE || 'fella_db',
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    server: process.env.DB_SERVER,
+    database: process.env.DB_DATABASE,
     options: {
         encrypt: false,
         trustServerCertificate: true,
-        instanceName: process.env.DB_INSTANCE || 'SQLEXPRESS'
+        instanceName: process.env.DB_INSTANCE
     }
 };
 
