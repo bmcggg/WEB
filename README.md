@@ -25,3 +25,21 @@
 │   └── pages/           # Các trang HTML (login, feed, profile...)
 ├── DATABASE_SCHEMA.md   # Tài liệu mô tả chi tiết Từ điển dữ liệu 16 bảng
 └── README.md            # Tài liệu hướng dẫn dự án
+```
+### 3. Cài đặt
+
+* **Bước 1:** Clone dự án về máy
+git clone <URL_REPOSITORY>
+cd <TEN_THU_MUC_DU_AN>
+* **Bước 2:** Cài đặt các thư viện phụ thuộc
+cd backend
+npm install
+* **Bước 3:** Tạo Database trống trên SQL Server
+* **Bước 4:** Tạo file .env 
+PORT=5000
+
+DB_USER=sa
+DB_PASSWORD=matsau_sql_cua_ban
+DB_SERVER=localhost
+DB_DATABASE=ten_db_cua_ban
+* **Bước 5:** Tại backend chạy npm start
