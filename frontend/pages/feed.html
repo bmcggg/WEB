@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fella - Bảng tin</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/feed.css">
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="logo" onclick="window.location.href='/pages/feed.html'" style="cursor: pointer;">Fella</div>
+        
+        <div class="user-info" style="display: flex; align-items: center; gap: 12px;">
+           
+            <a href="/pages/profile.html" class="user-profile-link" style="text-decoration: none; display: flex; align-items: center; gap: 8px;">
+                <div class="avatar avatar-sm" id="headerAvatar">U</div>
+                <span id="currentUser" style="font-weight: bold; color: #050505;">Xin chào!</span>
+            </a>
+            
+            <button id="logoutBtn" class="btn-logout">Đăng xuất</button>
+        </div>
+    </header>
+
+    <main class="feed-container">
+        <div class="create-post-card">
+            <textarea id="postContent" placeholder="Bạn đang nghĩ gì thế?"></textarea>
+            <div class="post-actions">
+                <button id="submitPostBtn" class="btn-post">Đăng bài</button>
+            </div>
+        </div>
+
+        <div id="postsContainer">
+            <p style="text-align: center; color: #65676b;">Đang tải bài viết...</p>
+        </div>
+    </main>
+
+    <script src="../js/api.js"></script>
+    <script src="../js/feed.js"></script>
+</body>
+</html>

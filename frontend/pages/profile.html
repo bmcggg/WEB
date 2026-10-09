@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang cá nhân | Fella</title>
+
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+  
+    <div class="navbar">
+        <div class="logo" onclick="window.location.href='feed.html'" style="cursor: pointer;">Fella</div>
+        <div class="nav-right">
+            <button class="btn-logout" id="logoutBtn">Đăng xuất</button>
+        </div>
+    </div>
+
+  
+    <div class="container">
+        
+   
+        <div class="profile-card">
+            <div class="avatar-wrapper">
+                <div class="avatar avatar-lg" id="userAvatar">U</div>
+              
+                <label for="avatarInput" class="change-avatar-btn" id="changeAvatarBtn" title="Đổi ảnh đại diện">📷</label>
+                <input type="file" id="avatarInput" accept="image/*" style="display: none;">
+            </div>
+
+            <div class="profile-name" id="fullName">Đang tải...</div>
+            <div class="profile-username" id="username">@username</div>
+            <div class="profile-bio" id="bio">Chưa có tiểu sử</div>
+
+            
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <div class="stat-value" id="postsCount">0</div>
+                    <div class="stat-label">Bài viết</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="followersCount">0</div>
+                    <div class="stat-label">Người theo dõi</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="followingCount">0</div>
+                    <div class="stat-label">Đang theo dõi</div>
+                </div>
+            </div>
+        </div>
+
+        
+        <div class="section-title">Bài viết cá nhân</div>
+        <div id="userPostsContainer">
+            <div class="empty-posts">Đang tải bài viết...</div>
+        </div>
+
+    </div>
+
+  
+    <script src="../js/api.js"></script>
+    <script src="../js/profile.js"></script>
+</body>
+</html>
