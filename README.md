@@ -17,7 +17,7 @@
 │   ├── utils/           # Các hàm tiện ích dùng chung
 │   ├── uploads/         # Thư mục lưu trữ tệp người dùng tải lên
 │   ├── public/          # Chứa các tệp tĩnh được phục vụ trực tiếp qua Web
-│   ├── schema.sql       # File khởi tạo cấu trúc 16 bảng SQL
+│   ├── sql/schema.sql       # File khởi tạo cấu trúc 16 bảng SQL
 │   └── server.js        # File chạy chính của server Node.js
 ├── frontend/
 │   ├── css/             # File giao diện CSS
@@ -33,12 +33,12 @@
 git clone <URL_REPOSITORY>
 cd <TEN_THU_MUC_DU_AN>
 ```
-* **Bước 2:** Cài đặt các thư viện phụ thuộc
+* **Bước 2:** Cài đặt các thư viện phụ thuộc bằng Windows Terminal
 ```
 cd backend
 npm install
 ```
-* **Bước 3:** Tạo file .env 
+* **Bước 3:** Tạo file .env trong backend
 ```env
   PORT=5000
   DB_USER=sa
