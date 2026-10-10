@@ -38,8 +38,7 @@ cd <TEN_THU_MUC_DU_AN>
 cd backend
 npm install
 ```
-* **Bước 3:** Tạo Database trống trên SQL Server
-* **Bước 4:** Tạo file .env 
+* **Bước 3:** Tạo file .env 
 ```env
   PORT=5000
   DB_USER=sa
