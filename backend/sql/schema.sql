@@ -1,5 +1,5 @@
 -- Bảng 1: USERS
-CREATE TABLE IF NOT EXISTS users (
+CREATE TABLE users (
     id INT IDENTITY(1,1) PRIMARY KEY,
     username NVARCHAR(50) NOT NULL UNIQUE,
     email NVARCHAR(100) NOT NULL UNIQUE,
@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 -- Bảng 2: POSTS
-CREATE TABLE IF NOT EXISTS posts (
+CREATE TABLE posts (
     id INT IDENTITY(1,1) PRIMARY KEY,
     user_id INT NOT NULL,
     content NVARCHAR(MAX),
@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS posts (
 );
 
 -- Bảng 3: COMMENTS
-CREATE TABLE IF NOT EXISTS comments (
+CREATE TABLE comments (
     id INT IDENTITY(1,1) PRIMARY KEY,
     post_id INT NOT NULL,
     user_id INT NOT NULL,
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS comments (
 );
 
 -- Bảng 4: REACTIONS
-CREATE TABLE IF NOT EXISTS reactions (
+CREATE TABLE reactions (
     user_id INT NOT NULL,
     post_id INT NOT NULL,
     created_at DATETIME2 DEFAULT GETDATE(),
@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS reactions (
 );
 
 -- Bảng 5: FOLLOWS
-CREATE TABLE IF NOT EXISTS follows (
+CREATE TABLE follows (
     follower_id INT NOT NULL,
     following_id INT NOT NULL,
     created_at DATETIME2 DEFAULT GETDATE(),
@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS follows (
 );
 
 -- Bảng 6: SHARES
-CREATE TABLE IF NOT EXISTS shares (
+CREATE TABLE shares (
     id INT IDENTITY(1,1) PRIMARY KEY,
     post_id INT NOT NULL,
     user_id INT NOT NULL,
@@ -67,7 +67,7 @@ CREATE TABLE IF NOT EXISTS shares (
 );
 
 -- Bảng 7: CONVERSATIONS
-CREATE TABLE IF NOT EXISTS conversations (
+CREATE TABLE conversations (
     id INT IDENTITY(1,1) PRIMARY KEY,
     type NVARCHAR(20) NOT NULL CHECK(type IN ('DIRECT', 'GROUP')),
     name NVARCHAR(255),
@@ -76,7 +76,7 @@ CREATE TABLE IF NOT EXISTS conversations (
 );
 
 -- Bảng 8: CONVERSATION_MEMBERS
-CREATE TABLE IF NOT EXISTS conversation_members (
+CREATE TABLE conversation_members (
     conversation_id INT NOT NULL,
     user_id INT NOT NULL,
     joined_at DATETIME2 DEFAULT GETDATE(),
@@ -86,7 +86,7 @@ CREATE TABLE IF NOT EXISTS conversation_members (
 );
 
 -- Bảng 9: MESSAGES
-CREATE TABLE IF NOT EXISTS messages (
+CREATE TABLE messages (
     id INT IDENTITY(1,1) PRIMARY KEY,
     sender_id INT NOT NULL,
     conversation_id INT NOT NULL,
@@ -97,7 +97,7 @@ CREATE TABLE IF NOT EXISTS messages (
 );
 
 -- Bảng 10: MESSAGE_READS
-CREATE TABLE IF NOT EXISTS message_reads (
+CREATE TABLE message_reads (
     user_id INT NOT NULL,
     message_id INT NOT NULL,
     read_at DATETIME2 DEFAULT GETDATE(),
@@ -107,7 +107,7 @@ CREATE TABLE IF NOT EXISTS message_reads (
 );
 
 -- Bảng 11: MESSAGE_MEDIA
-CREATE TABLE IF NOT EXISTS message_media (
+CREATE TABLE message_media (
     id INT IDENTITY(1,1) PRIMARY KEY,
     message_id INT NOT NULL,
     media_url NVARCHAR(MAX) NOT NULL,
@@ -117,7 +117,7 @@ CREATE TABLE IF NOT EXISTS message_media (
 );
 
 -- Bảng 12: POST_MEDIA
-CREATE TABLE IF NOT EXISTS post_media (
+CREATE TABLE post_media (
     id INT IDENTITY(1,1) PRIMARY KEY,
     post_id INT NOT NULL,
     media_url NVARCHAR(MAX) NOT NULL,
@@ -127,7 +127,7 @@ CREATE TABLE IF NOT EXISTS post_media (
 );
 
 -- Bảng 13: COMMENT_MEDIA
-CREATE TABLE IF NOT EXISTS comment_media (
+CREATE TABLE comment_media (
     id INT IDENTITY(1,1) PRIMARY KEY,
     comment_id INT NOT NULL,
     media_url NVARCHAR(MAX) NOT NULL,
@@ -137,7 +137,7 @@ CREATE TABLE IF NOT EXISTS comment_media (
 );
 
 -- Bảng 14: NOTIFICATIONS
-CREATE TABLE IF NOT EXISTS notifications (
+CREATE TABLE notifications (
     id INT IDENTITY(1,1) PRIMARY KEY,
     type NVARCHAR(20) CHECK(type IN ('REACTED','COMMENTED','FOLLOWED','MESSAGED')) NOT NULL,
     sender_id INT NOT NULL,
@@ -157,7 +157,7 @@ CREATE TABLE IF NOT EXISTS notifications (
 CREATE INDEX idx_notifications_receiver ON notifications(receiver_id);
 
 -- Bảng 15: STORIES
-CREATE TABLE IF NOT EXISTS stories (
+CREATE TABLE stories (
     id INT IDENTITY(1,1) PRIMARY KEY,
     user_id INT NOT NULL,
     media_url NVARCHAR(MAX) NOT NULL,
@@ -167,7 +167,7 @@ CREATE TABLE IF NOT EXISTS stories (
 );
 
 -- Bảng 16: SAVED_POSTS
-CREATE TABLE IF NOT EXISTS saved_posts (
+CREATE TABLE saved_posts (
     user_id INT NOT NULL,
     post_id INT NOT NULL,
     created_at DATETIME2 DEFAULT GETDATE(),
