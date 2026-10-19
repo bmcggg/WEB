@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/NavBar";
 import PostCard from "../../components/PostCard";
 import { fetchAPI } from "../../services/api";
-import './feed.css';
+import styles from './feed.module.css';
 
 export default function Feed() {
   const [posts, setPosts] = useState([]);
@@ -56,15 +56,15 @@ export default function Feed() {
   return (
     <div>
       <Navbar />
-      <main className="feed-container">
-        <div className="create-post-card">
+      <main className={styles.feedContainer}>
+        <div className={styles.createPostCard}>
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
             placeholder="Bạn đang nghĩ gì thế?"
           ></textarea>
-          <div className="post-actions">
-            <button onClick={handleCreatePost} className="btn-post">
+          <div className={styles.postActions}>
+            <button onClick={handleCreatePost} className={styles.btnPost}>
               Đăng bài
             </button>
           </div>
@@ -72,11 +72,11 @@ export default function Feed() {
 
         <div id="postsContainer">
           {loading ? (
-            <p style={{ textAlign: "center", color: "#65676b" }}>
+            <p className={styles.statusText}>
               Đang tải bài viết...
             </p>
           ) : posts.length === 0 ? (
-            <p style={{ textAlign: "center", color: "#65676b" }}>
+            <p className={styles.statusText}>
               Chưa có bài viết nào.
             </p>
           ) : (
