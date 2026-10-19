@@ -1,13 +1,16 @@
-import { LoginPage } from '../src/pages/auth/LoginPage'
-import { RegisterPage } from '../src/pages/auth/RegisterPage'
+import React from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import Login from '../src/pages/auth/Login';
+import Feed from '../src/pages/feed/Feed';
 
-function App() {
-
-  return (
-    <>
-      <LoginPage/>
-    </>
-  )
+export default function App() {
+    return (
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<Navigate to="/login" />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/feed" element={<Feed />} />
+            </Routes>
+        </BrowserRouter>
+    );
 }
-
-export default App

@@ -1,0 +1,89 @@
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import Navbar from "../../components/NavBar";
+import PostCard from "../../components/PostCard";
+import { fetchAPI } from "../../services/api";
+import './feed.css';
+
+export default function Feed() {
+  const [posts, setPosts] = useState([]);
+  const [content, setContent] = useState("");
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem("fella_user"));
+
+  useEffect(() => {
+    const token = localStorage.getItem("fella_token");
+    if (!token || !user) {
+      navigate("/login");
+      return;
+    }
+    loadPosts();
+  }, []);
+
+  const loadPosts = async () => {
+    try {
+      const response = await fetchAPI("/posts");
+      setPosts(response.data || []);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCreatePost = async () => {
+    if (!content.trim()) {
+      alert("Vui lòng nhập nội dung bài viết!");
+      return;
+    }
+    try {
+      await fetchAPI("/posts", {
+        method: "POST",
+        body: JSON.stringify({
+          user_id: user.id,
+          content: content,
+          privacy: "PUBLIC",
+        }),
+      });
+      setContent("");
+      loadPosts();
+    } catch (err) {
+      alert("Đăng bài thất bại: " + err.message);
+    }
+  };
+
+  return (
+    <div>
+      <Navbar />
+      <main className="feed-container">
+        <div className="create-post-card">
+          <textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder="Bạn đang nghĩ gì thế?"
+          ></textarea>
+          <div className="post-actions">
+            <button onClick={handleCreatePost} className="btn-post">
+              Đăng bài
+            </button>
+          </div>
+        </div>
+
+        <div id="postsContainer">
+          {loading ? (
+            <p style={{ textAlign: "center", color: "#65676b" }}>
+              Đang tải bài viết...
+            </p>
+          ) : posts.length === 0 ? (
+            <p style={{ textAlign: "center", color: "#65676b" }}>
+              Chưa có bài viết nào.
+            </p>
+          ) : (
+            posts.map((post) => <PostCard key={post.id} post={post} />)
+          )}
+        </div>
+      </main>
+    </div>
+  );
+}
