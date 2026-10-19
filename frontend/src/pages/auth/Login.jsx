@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { fetchAPI } from "../../services/api";
-import styles from "./login.module.css";
+import styles from "./auth.module.css";
 
 export default function Login() {
   const [account, setAccount] = useState("");
@@ -31,6 +31,7 @@ export default function Login() {
   };
 
   return (
+    <main className={styles.authPage}>
     <div className={styles["auth-container"]}>
       <div className={styles["auth-header"]}>
         <h1>Fella</h1>
@@ -39,12 +40,12 @@ export default function Login() {
 
       {alert.message && (
         <div
-          className={`${styles["alert-message"]} ${
+          className={`${styles["alert-message"]} ${styles.alertVisible} ${
             alert.type === "success"
               ? styles["alert-success"]
               : styles["alert-error"]
           }`}
-          style={{ display: "block" }}
+          role="alert"
         >
           {alert.message}
         </div>
@@ -84,5 +85,6 @@ export default function Login() {
         </p>
       </div>
     </div>
+    </main>
   );
 }

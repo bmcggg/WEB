@@ -9,8 +9,10 @@ export default function Feed() {
   const [posts, setPosts] = useState([]);
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem("fella_user"));
+  let user = null;
+  try { user = JSON.parse(localStorage.getItem("fella_user") || "null"); } catch { user = null; }
 
   useEffect(() => {
     const token = localStorage.getItem("fella_token");
@@ -27,6 +29,7 @@ export default function Feed() {
       setPosts(response.data || []);
     } catch (err) {
       console.error(err);
+      setLoadError(err.message);
     } finally {
       setLoading(false);
     }
@@ -75,6 +78,8 @@ export default function Feed() {
             <p className={styles.statusText}>
               Đang tải bài viết...
             </p>
+          ) : loadError ? (
+            <p className={styles.statusText} role="alert" style={{ color: "red" }}>Lỗi: {loadError}</p>
           ) : posts.length === 0 ? (
             <p className={styles.statusText}>
               Chưa có bài viết nào.
