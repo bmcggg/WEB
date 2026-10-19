@@ -3,8 +3,8 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
-const { sql, connectDB } = require('./config/database'); 
-const initDatabase = require('./config/database-init'); 
+const { sql, connectDB } = require('./config/database');
+const initDatabase = require('./config/database-init');
 const authRoutes = require('./routes/auth');
 const postRoutes = require('./routes/posts');
 
@@ -29,8 +29,8 @@ app.get('/', (req, res) => {
 });
 
 initDatabase().then(async () => {
-    await connectDB(); 
-    
+    await connectDB();
+
     app.listen(PORT, () => {
         console.log(`Server running at: http://localhost:${PORT}`);
     });
