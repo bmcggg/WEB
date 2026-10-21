@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Navbar from '../../components/NavBar';
 import PostCard from '../../components/PostCard';
-import { fetchAPI } from '../../services/api';
+import { api, getAPIErrorMessage } from '../../services/api';
 import styles from './profile.module.css';
 
 function readUser() {
@@ -27,12 +27,12 @@ export default function Profile() {
       return;
     }
     let active = true;
-    fetchAPI(`/auth/profile/${encodeURIComponent(targetUserId)}`)
-      .then((response) => { if (active) setProfile(response.data || response); })
-      .catch((error) => { if (active) setProfile({ error: error.message }); });
-    fetchAPI(`/posts/user/${encodeURIComponent(targetUserId)}`)
-      .then((response) => { if (active) setPosts(response.data || response || []); })
-      .catch((error) => { if (active) setPostError(error.message); })
+    api.get(`/auth/profile/${encodeURIComponent(targetUserId)}`)
+      .then(({ data }) => { if (active) setProfile(data.data || data); })
+      .catch((error) => { if (active) setProfile({ error: getAPIErrorMessage(error) }); });
+    api.get(`/posts/user/${encodeURIComponent(targetUserId)}`)
+      .then(({ data }) => { if (active) setPosts(data.data || data || []); })
+      .catch((error) => { if (active) setPostError(getAPIErrorMessage(error)); })
       .finally(() => { if (active) setLoadingPosts(false); });
     return () => { active = false; };
   }, [navigate, targetUserId]);
@@ -44,19 +44,19 @@ export default function Profile() {
     formData.append('avatar', file);
     formData.append('userId', currentUser.id);
     try {
-      const response = await fetch('http://localhost:5000/api/auth/update-avatar', {
+      const response = await api.request({
+        url: '/auth/update-avatar',
         method: 'POST',
         headers: { Authorization: `Bearer ${localStorage.getItem('fella_token')}` },
-        body: formData,
+        data: formData,
       });
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.error || 'Cập nhật avatar thất bại');
+      const result = response.data;
       window.alert('Cập nhật avatar thành công!');
       const updatedUser = { ...currentUser, avatar: result.avatar };
       localStorage.setItem('fella_user', JSON.stringify(updatedUser));
       setProfile((current) => ({ ...current, avatar: result.avatar }));
     } catch (error) {
-      window.alert(error.message || 'Có lỗi xảy ra khi tải ảnh lên!');
+      window.alert(getAPIErrorMessage(error) || 'Có lỗi xảy ra khi tải ảnh lên!');
     } finally {
       event.target.value = '';
     }

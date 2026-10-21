@@ -24,6 +24,144 @@
   gap: 12px;
 }
 
+.chatMenu {
+  position: relative;
+}
+
+.chatLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 20px;
+  background: transparent;
+  color: #606770;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.chatLink:hover,
+.chatLinkActive {
+  background-color: #e7f3ff;
+  color: #1877f2;
+}
+
+.chatLink svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
+.chatPopover {
+  position: absolute;
+  z-index: 1100;
+  top: calc(100% + 12px);
+  right: -90px;
+  display: flex;
+  width: min(360px, calc(100vw - 24px));
+  min-height: 390px;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid #e4e6eb;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  color: #050505;
+}
+
+.chatPopoverHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 18px 12px;
+}
+
+.chatPopoverHeader h2 {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.expandChatButton {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border-radius: 50%;
+  background: #f0f2f5;
+  color: #606770;
+}
+
+.expandChatButton:hover {
+  background: #e4e6eb;
+}
+
+.expandChatButton svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+
+.chatPopoverSearch {
+  margin: 0 16px;
+  padding: 9px 14px;
+  border-radius: 20px;
+  background: #f0f2f5;
+  color: #65676b;
+  font-size: 14px;
+}
+
+.chatPopoverEmpty {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 24px;
+  text-align: center;
+}
+
+.chatPopoverEmpty strong {
+  font-size: 14px;
+}
+
+.chatPopoverEmpty > span:last-child {
+  color: #65676b;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.chatPopoverIcon {
+  display: grid;
+  width: 58px;
+  height: 58px;
+  place-items: center;
+  margin-bottom: 5px;
+  border-radius: 50%;
+  background: #e7f3ff;
+}
+
+.chatPopoverIcon svg {
+  width: 32px;
+  height: 32px;
+  fill: #1877f2;
+}
+
+.chatPopoverIcon svg path + path {
+  fill: none;
+  stroke: #fff;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
 .userProfileLink {
   text-decoration: none;
   display: flex;
@@ -69,4 +207,20 @@
 
 .btnLogout:hover {
   background-color: #d8dadf;
+}
+
+@media (max-width: 560px) {
+  .chatLink {
+    gap: 0;
+    padding: 8px;
+  }
+
+  .chatLink span,
+  .userName {
+    display: none;
+  }
+
+  .chatPopover {
+    right: -55px;
+  }
 }

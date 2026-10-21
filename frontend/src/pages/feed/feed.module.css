@@ -1,54 +1,97 @@
-.feedContainer {
-  max-width: 680px;
-  margin: 20px auto;
-  padding: 0 12px;
-}
-
-.createPostCard {
-  background-color: #ffffff;
-  border-radius: 8px;
-  padding: 16px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  margin-bottom: 16px;
-}
-
-.createPostCard textarea {
-  width: 100%;
-  height: 80px;
-  resize: none;
-  font-size: 15px;
-  border: 1px solid #ccd0d5;
-  border-radius: 6px;
-  padding: 8px;
-  outline: none;
-  font-family: inherit;
-}
-
-.createPostCard textarea:focus {
-  border-color: #1877f2;
-}
-
-.postActions {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 10px;
-}
-
-.btnPost {
-  background-color: #1877f2;
-  color: white;
-  border: none;
-  padding: 8px 20px;
-  border-radius: 6px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.btnPost:hover {
-  background-color: #166fe5;
-}
-
-.statusText {
-  text-align: center;
-  color: #65676b;
-}
+.app { min-height: 100vh; background: #f0f2f5; color: #1c1e21; }
+.topbar { height: 64px; padding: 0 20px; display: grid; grid-template-columns: 1fr 1.1fr 1fr; align-items: center; background: #fff; position: sticky; top: 0; z-index: 20; box-shadow: 0 1px 3px #00000018; }
+.brandGroup, .topActions { display: flex; align-items: center; gap: 10px; }
+.brand { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 50%; background: #0866ff; color: white; font-family: Arial,sans-serif; font-size: 34px; font-weight: 700; line-height: 1; text-decoration: none; }
+.search { height: 42px; max-width: 245px; width: 100%; padding: 0 13px; border-radius: 24px; background: #f0f2f5; display: flex; align-items: center; gap: 9px; color: #65676b; }
+.search input { width: 100%; min-width: 0; border: 0; outline: 0; background: transparent; padding: 0; box-shadow: none; font-size: 14px; }
+.mainNav { height: 100%; display: flex; justify-content: center; gap: 8px; }
+.mainNav a { width: min(8vw, 112px); height: 100%; display: grid; place-items: center; color: #65676b; border-bottom: 3px solid transparent; text-decoration: none; }
+.mainNav a:hover { background: #f7f8fa; border-radius: 8px; }
+.mainNav .navActive { color: #0866ff; border-bottom-color: #0866ff; }
+.topActions { justify-content: flex-end; gap: 9px; }
+.circleButton { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: #e4e6eb; color: #1c1e21; font-size: 21px; position: relative; }
+.circleButton i { position: absolute; width: 8px; height: 8px; top: 5px; right: 5px; background: #fa383e; border: 1px solid white; border-radius: 50%; }
+.avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; flex: none; background: #e4e6eb; }
+.smallAvatar { width: 34px; height: 34px; }
+.layout { max-width: 1660px; margin: 0 auto; display: grid; grid-template-columns: minmax(220px, 1fr) minmax(500px, 680px) minmax(240px, 1fr); gap: 32px; padding: 24px 24px 50px; }
+.leftSidebar, .rightSidebar { position: sticky; top: 88px; align-self: start; max-height: calc(100vh - 104px); overflow-y: auto; scrollbar-width: thin; }
+.leftSidebar { padding: 0 8px; }
+.leftSidebar > a { min-height: 48px; display: flex; align-items: center; gap: 12px; padding: 6px 8px; color: #1c1e21; text-decoration: none; border-radius: 8px; font-size: 15px; }
+.leftSidebar > a:hover, .contact:hover { background: #e4e6e9; }
+.leftSidebar > a .avatar { width: 36px; height: 36px; }
+.leftSidebar strong { font-weight: 600; }
+.shortcutIcon, .groupThumb { width: 36px; text-align: center; font-size: 23px; }
+.groupThumb { font-size: 24px; }
+.sidebarRule, .sideDivider { height: 1px; background: #ced0d4; margin: 12px 0 16px; }
+.leftSidebar h3, .rightSidebar h3 { color: #65676b; font-size: 17px; font-weight: 600; margin: 0 0 8px; }
+.legal { color: #65676b; font-size: 12px; line-height: 1.5; padding: 14px 8px; }
+.feed { width: 100%; max-width: 680px; margin: 0 auto; }
+.stories { display: grid; grid-template-columns: repeat(5, 1fr); gap: 9px; margin-bottom: 18px; }
+.story { height: 196px; border-radius: 11px; overflow: hidden; position: relative; background: #d9dce1; box-shadow: 0 1px 2px #00000018; cursor: pointer; }
+.story > img { width: 100%; height: 100%; object-fit: cover; transition: transform .2s ease; }
+.story:hover > img { transform: scale(1.04); }
+.story::after { content: ""; position: absolute; inset: 45% 0 0; background: linear-gradient(transparent, #0009); }
+.story strong { position: absolute; z-index: 1; left: 10px; right: 7px; bottom: 10px; color: white; font-size: 13px; line-height: 1.2; text-shadow: 0 1px 3px #000; }
+.story .storyAvatar { width: 39px; height: 39px; border: 4px solid #0866ff; position: absolute; top: 10px; left: 10px; z-index: 1; }
+.createStory { background: white; }
+.createStory > img { height: 70%; }
+.createStory::after { display: none; }
+.createStory button { position: absolute; top: calc(70% - 20px); left: calc(50% - 20px); z-index: 2; width: 40px; height: 40px; border: 4px solid white; border-radius: 50%; background: #0866ff; color: white; font-size: 26px; line-height: 1; }
+.createStory strong { z-index: 2; color: #1c1e21; text-align: center; left: 0; right: 0; bottom: 12px; text-shadow: none; }
+.composer, .post { background: #fff; border-radius: 9px; box-shadow: 0 1px 2px #00000020; margin-bottom: 16px; }
+.composer { padding: 12px 16px 4px; }
+.composeTop { display: flex; align-items: center; gap: 9px; }
+.composeTop input, .commentBox input { flex: 1; border: 0; outline: 0; background: #f0f2f5; border-radius: 24px; height: 40px; padding: 0 15px; font-size: 16px; box-shadow: none; }
+.composeTop input:hover, .commentBox input:hover { background: #e4e6e9; }
+.composeDivider, .postDivider { height: 1px; background: #e4e6eb; }
+.composeDivider { margin: 12px 0 5px; }
+.composeActions, .postActions { display: flex; align-items: center; justify-content: space-around; }
+.composeActions button, .postActions button { min-height: 42px; padding: 0 7px; border-radius: 6px; display: flex; align-items: center; justify-content: center; gap: 7px; color: #65676b; background: transparent; font-size: 14px; font-weight: 600; white-space: nowrap; }
+.composeActions button:hover, .postActions button:hover { background: #f0f2f5; }
+.composeActions button span { font-size: 20px; }
+.composeActions .publishButton { background: #0866ff; color: white; padding: 0 15px; }
+.feedHeading { display: flex; align-items: center; justify-content: space-between; margin: 18px 2px 12px; }
+.feedHeading h2 { color: #65676b; font-size: 17px; font-weight: 600; }
+.feedHeading button { background: #e4e6eb; border-radius: 6px; color: #1c1e21; padding: 8px 12px; font-weight: 600; }
+.post { padding: 14px 16px 8px; overflow: hidden; }
+.postHeader { display: flex; align-items: center; gap: 10px; }
+.author { display: flex; flex-direction: column; gap: 2px; font-size: 14px; }
+.author strong { font-weight: 650; }
+.author span { color: #65676b; font-size: 12px; }
+.more, .sponsoredHeader button { margin-left: auto; width: 36px; height: 36px; border-radius: 50%; color: #65676b; background: transparent; font-weight: bold; font-size: 23px; line-height: 0; }
+.more:hover, .sponsoredHeader button:hover { background: #f0f2f5; }
+.postText { padding: 12px 0; line-height: 1.45; font-size: 15px; white-space: pre-wrap; }
+.postText a { color: #0866ff; text-decoration: none; }
+.postImage { display: block; width: calc(100% + 32px); max-height: 460px; margin: 0 -16px; object-fit: cover; }
+.reactionSummary { min-height: 39px; display: flex; align-items: center; color: #65676b; font-size: 13px; }
+.likeBubble { display: grid; place-items: center; width: 19px; height: 19px; border: 2px solid white; margin-right: 2px; background: #0866ff; color: white; font-size: 11px; border-radius: 50%; }
+.commentCount { margin-left: auto; }
+.postActions { justify-content: stretch; }
+.postActions button { flex: 1; min-height: 42px; }
+.postActions svg { width: 19px; height: 19px; }
+.postActions .liked { color: #0866ff; }
+.commentBox { display: flex; align-items: center; gap: 8px; padding-top: 6px; }
+.commentBox .avatar { width: 32px; height: 32px; }
+.commentBox input { height: 34px; font-size: 14px; }
+.rightSidebar { padding: 0 8px; }
+.sponsoredHeader, .contactsHeader { display: flex; align-items: center; justify-content: space-between; }
+.sponsoredHeader h3 { margin: 0; }
+.ad { display: flex; align-items: center; gap: 12px; padding: 12px 0; text-decoration: none; color: #1c1e21; }
+.ad img { width: 110px; height: 78px; object-fit: cover; border-radius: 8px; }
+.ad div { display: flex; flex-direction: column; gap: 4px; font-size: 14px; }
+.ad span { color: #65676b; font-size: 12px; }
+.sideDivider { margin: 8px 0 12px; }
+.contactsHeader { margin-bottom: 5px; }
+.contactsHeader h3 { margin: 0; }
+.contactsHeader div { display: flex; gap: 4px; }
+.contactsHeader button { width: 32px; height: 32px; background: transparent; color: #65676b; border-radius: 50%; font-size: 21px; }
+.contactsHeader button:hover { background: #e4e6e9; }
+.contact { display: flex; align-items: center; gap: 11px; padding: 7px 6px; color: #1c1e21; text-decoration: none; border-radius: 8px; }
+.contact strong { font-size: 14px; font-weight: 600; }
+.onlineAvatar { position: relative; }
+.onlineAvatar .avatar { width: 36px; height: 36px; display: block; }
+.onlineAvatar i { position: absolute; bottom: 0; right: 0; width: 11px; height: 11px; background: #bec3c9; border: 2px solid #f0f2f5; border-radius: 50%; }
+.onlineAvatar .online { background: #31a24c; }
+@media (max-width: 1120px) { .layout { grid-template-columns: 220px minmax(480px, 680px); justify-content: center; gap: 20px; } .rightSidebar { display: none; } .topbar { grid-template-columns: 1fr 1fr 1fr; } }
+@media (max-width: 760px) { .topbar { height: 56px; padding: 0 12px; grid-template-columns: 1fr auto; } .brand { width: 38px; height: 38px; font-size: 31px; } .search { width: 42px; padding: 0 11px; } .search input { width: 0; } .mainNav { display: none; } .topActions { gap: 6px; } .circleButton { width: 36px; height: 36px; } .layout { display: block; padding: 16px 0; } .leftSidebar, .rightSidebar { display: none; } .feed { width: min(100% - 20px, 600px); } .stories { gap: 7px; } .story { height: clamp(130px, 32vw, 185px); } .composeActions button { font-size: 12px; gap: 4px; } .composeActions button span { font-size: 17px; } .post { border-radius: 0; margin-left: -10px; margin-right: -10px; } }
+@media (max-width: 420px) { .topActions .circleButton:nth-child(1) { display: none; } .stories { grid-template-columns: repeat(4, 1fr); } .stories .story:last-child { display: none; } .story { height: 150px; } .composeActions button { font-size: 0; } .composeActions button span { font-size: 21px; } .composeActions .publishButton { font-size: 13px; } .postActions button { font-size: 13px; gap: 4px; } }

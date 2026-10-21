@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { fetchAPI } from "../../services/api";
+import { api, getAPIErrorMessage } from "../../services/api";
 import styles from "./auth.module.css";
 
 export default function Register() {
@@ -24,17 +24,14 @@ export default function Register() {
       email: form.email.trim(),
     };
     try {
-      await fetchAPI("/auth/register", {
-        method: "POST",
-        body: JSON.stringify(values),
-      });
+      await api.post("/auth/register", values);
       setAlert({
         message: "Đăng ký thành công! Đang chuyển sang trang đăng nhập...",
         type: "success",
       });
       setTimeout(() => navigate("/login"), 1500);
     } catch (error) {
-      setAlert({ message: error.message, type: "error" });
+      setAlert({ message: getAPIErrorMessage(error), type: "error" });
     }
   };
 

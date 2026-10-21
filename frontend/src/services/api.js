@@ -1,27 +1,25 @@
-const API_BASE_URL = "http://localhost:5000/api";
+import axios from "axios";
 
-export async function fetchAPI(endpoint, options = {}) {
+export const api = axios.create({
+  baseURL: "http://localhost:5000/api",
+});
+
+api.interceptors.request.use((config) => {
   const token = localStorage.getItem("fella_token");
 
-  const headers = {
-    "Content-Type": "application/json",
-    ...options.headers,
-  };
-
   if (token) {
-    headers["Authorization"] = `Bearer ${token}`;
+    config.headers.Authorization = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-    ...options,
-    headers,
-  });
+  return config;
+});
 
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data.error || "Có lỗi xảy ra, vui lòng thử lại!");
+export function getAPIErrorMessage(error) {
+  if (axios.isAxiosError(error)) {
+    return error.response?.data?.error || error.message || "Có lỗi xảy ra, vui lòng thử lại!";
   }
 
-  return data;
+  return error instanceof Error
+    ? error.message
+    : "Có lỗi xảy ra, vui lòng thử lại!";
 }
