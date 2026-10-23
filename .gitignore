@@ -4,4 +4,10 @@ node_modules/
 *.sqlite
 .DS_Store
 uploads/
+backend/storage/
+.env.*
+!.env.example
+*.log
 note.txt
+coverage/
+/Baaa.md

@@ -4,7 +4,10 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node --watch server.js"
+    "dev": "node --watch server.js",
+    "test": "node --test tests/*.test.js",
+    "test:integration": "node --test tests/integration/*.test.js",
+    "cleanup:posts": "node scripts/cleanup-posts.js"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",

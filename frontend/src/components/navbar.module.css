@@ -70,3 +70,11 @@
 .btnLogout:hover {
   background-color: #d8dadf;
 }
+
+.logo:focus-visible, .userProfileLink:focus-visible, .btnLogout:focus-visible { outline: 3px solid #1877f2; outline-offset: 3px; }
+@media (max-width: 480px) {
+  .navbar { padding: 10px 12px; }
+  .userInfo { gap: 8px; }
+  .userName { display: none; }
+  .btnLogout { padding: 8px; }
+}

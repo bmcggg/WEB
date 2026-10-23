@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const authService = require('../services/authService');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret_key';
+const { getJwtSecret } = require('../config/jwt');
 
 class AuthController {
     async register(req, res) {
@@ -51,7 +51,7 @@ class AuthController {
 
             const token = jwt.sign(
                 { id: user.id, username: user.username, role: user.role },
-                JWT_SECRET,
+                getJwtSecret(),
                 { expiresIn: '7d' }
             );
 

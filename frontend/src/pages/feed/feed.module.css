@@ -4,6 +4,9 @@
   padding: 0 12px;
 }
 
+.heading { font-size: 25px; margin-bottom: 4px; }
+.subtitle { color: #65676b; margin-bottom: 20px; font-size: 14px; }
+
 .createPostCard {
   background-color: #ffffff;
   border-radius: 8px;
