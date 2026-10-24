@@ -5,9 +5,10 @@ const config = {
     password: process.env.DB_PASSWORD,
     server: process.env.DB_SERVER || 'localhost',
     database: process.env.DB_DATABASE || 'NEW',
+    port: Number(process.env.DB_PORT || 1433),
     options: {
-        encrypt: false,
-        trustServerCertificate: true,
+        encrypt: process.env.DB_ENCRYPT === 'true',
+        trustServerCertificate: process.env.DB_TRUST_CERTIFICATE !== 'false',
         instanceName: process.env.DB_INSTANCE
     }
 };

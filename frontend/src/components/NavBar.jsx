@@ -1,15 +1,10 @@
-import React from "react";
 import { useNavigate, Link } from "react-router-dom";
 import styles from "./navbar.module.css";
+import { assetUrl, readUser } from '../services/api';
 
 export default function Navbar({ compact = false }) {
   const navigate = useNavigate();
-  let user = {};
-  try {
-    user = JSON.parse(localStorage.getItem("fella_user") || "{}") || {};
-  } catch {
-    user = {};
-  }
+  const user = readUser() || {};
 
   const handleLogout = () => {
     localStorage.removeItem("fella_token");
@@ -19,17 +14,18 @@ export default function Navbar({ compact = false }) {
 
   return (
     <header className={styles.navbar}>
-      <div className={styles.logo} onClick={() => navigate("/feed")}>
+      <Link className={styles.logo} to="/feed">
         Fella
-      </div>
+      </Link>
 
       <div className={styles.userInfo}>
+        <Link to="/saved" className={styles.userProfileLink}>Đã lưu</Link>
         {!compact && (
           <Link to="/profile" className={styles.userProfileLink}>
             <div
               className={`${styles.avatar} ${styles.avatarSm}`}
               style={
-                user.avatar ? { backgroundImage: `url('${user.avatar}')` } : {}
+                user.avatar ? { backgroundImage: `url('${assetUrl(user.avatar)}')` } : {}
               }
             >
               {!user.avatar &&

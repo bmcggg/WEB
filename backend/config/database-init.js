@@ -4,7 +4,7 @@ const path = require("path");
 const { config } = require("./database");
 
 async function initDatabase() {
-    const databaseName = process.env.DB_DATABASE;
+    const databaseName = config.database;
     let masterPool;
 
     try {
