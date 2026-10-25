@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Navbar from '../../components/NavBar';
-import PostCard from '../../components/PostCard';
-import { fetchAPI } from '../../services/api';
+import PostList from '../../components/PostList';
+import { assetUrl, fetchAPI } from '../../services/api';
 import styles from './profile.module.css';
 
 function readUser() {
@@ -12,9 +12,6 @@ function readUser() {
 
 export default function Profile() {
   const [profile, setProfile] = useState(null);
-  const [posts, setPosts] = useState([]);
-  const [loadingPosts, setLoadingPosts] = useState(true);
-  const [postError, setPostError] = useState('');
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const currentUser = readUser();
@@ -30,10 +27,6 @@ export default function Profile() {
     fetchAPI(`/auth/profile/${encodeURIComponent(targetUserId)}`)
       .then((response) => { if (active) setProfile(response.data || response); })
       .catch((error) => { if (active) setProfile({ error: error.message }); });
-    fetchAPI(`/posts/user/${encodeURIComponent(targetUserId)}`)
-      .then((response) => { if (active) setPosts(response.data || response || []); })
-      .catch((error) => { if (active) setPostError(error.message); })
-      .finally(() => { if (active) setLoadingPosts(false); });
     return () => { active = false; };
   }, [navigate, targetUserId]);
 
@@ -44,13 +37,10 @@ export default function Profile() {
     formData.append('avatar', file);
     formData.append('userId', currentUser.id);
     try {
-      const response = await fetch('http://localhost:5000/api/auth/update-avatar', {
+      const result = await fetchAPI('/auth/update-avatar', {
         method: 'POST',
-        headers: { Authorization: `Bearer ${localStorage.getItem('fella_token')}` },
         body: formData,
       });
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.error || 'Cập nhật avatar thất bại');
       window.alert('Cập nhật avatar thành công!');
       const updatedUser = { ...currentUser, avatar: result.avatar };
       localStorage.setItem('fella_user', JSON.stringify(updatedUser));
@@ -62,7 +52,7 @@ export default function Profile() {
     }
   };
 
-  const avatar = profile?.avatar ? { backgroundImage: `url('${profile.avatar}')` } : {};
+  const avatar = profile?.avatar ? { backgroundImage: `url('${assetUrl(profile.avatar)}')` } : {};
   const avatarText = (profile?.full_name || profile?.username || 'U').charAt(0).toUpperCase();
 
   return (
@@ -84,10 +74,7 @@ export default function Profile() {
           </div>
         </section>
         <h2 className={styles.sectionTitle}>Bài viết cá nhân</h2>
-        {loadingPosts ? <div className={styles.emptyPosts}>Đang tải bài viết...</div>
-          : postError ? <div className={`${styles.emptyPosts} ${styles.error}`}>Lỗi: {postError}</div>
-            : posts.length === 0 ? <div className={styles.emptyPosts}>Người dùng này chưa có bài viết nào.</div>
-              : posts.map((post) => <PostCard key={post.id} post={post} />)}
+        {targetUserId && <PostList key={targetUserId} endpoint={`/posts/user/${encodeURIComponent(targetUserId)}`} emptyMessage="Chưa có bài viết nào bạn được phép xem." onDeleted={() => setProfile((current) => current ? { ...current, posts_count: Math.max(0, (current.posts_count || 0) - 1) } : current)} />}
       </main>
     </>
   );

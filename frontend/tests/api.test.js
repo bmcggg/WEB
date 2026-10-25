@@ -1,0 +1,40 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+
+test('API client preserves JSON, multipart, Blob, 204 and session-expiry behavior', async (context) => {
+  const values = new Map([['fella_token', 'test-token'], ['fella_user', '{"id":1}']]);
+  const events = [];
+  const previousStorage = Object.getOwnPropertyDescriptor(globalThis, 'localStorage');
+  const previousWindow = Object.getOwnPropertyDescriptor(globalThis, 'window');
+  Object.defineProperty(globalThis, 'localStorage', { value: { getItem: (key) => values.get(key) || null, removeItem: (key) => values.delete(key) }, configurable: true });
+  Object.defineProperty(globalThis, 'window', { value: { location: { origin: 'http://localhost:5173' }, dispatchEvent: (event) => events.push(event.type) }, configurable: true });
+  context.after(() => {
+    if (previousStorage) Object.defineProperty(globalThis, 'localStorage', previousStorage);
+    else delete globalThis.localStorage;
+    if (previousWindow) Object.defineProperty(globalThis, 'window', previousWindow);
+    else delete globalThis.window;
+  });
+  const requests = [];
+  let response = new Response('{"data":[]}', { headers: { 'Content-Type': 'application/json' } });
+  context.mock.method(globalThis, 'fetch', async (url, options) => { requests.push({ url, options }); return response; });
+  const { fetchAPI, assetUrl } = await import('../src/services/api.js');
+  assert.deepEqual(await fetchAPI('/posts', { method: 'POST', body: JSON.stringify({ content: 'hi' }) }), { data: [] });
+  assert.equal(requests[0].options.headers.get('Content-Type'), 'application/json');
+  assert.equal(requests[0].options.headers.get('Authorization'), 'Bearer test-token');
+  response = new Response('{"postId":1}', { headers: { 'Content-Type': 'application/json' } });
+  await fetchAPI('/posts', { method: 'POST', body: new FormData(), headers: { 'Content-Type': 'multipart/form-data' } });
+  assert.equal(requests[1].options.headers.has('Content-Type'), false);
+  response = new Response('file-content', { headers: { 'Content-Type': 'application/pdf' } });
+  assert.equal(await (await fetchAPI('/api/posts/1/media/1', { responseType: 'blob' })).text(), 'file-content');
+  assert.equal(requests[2].url, 'http://localhost:5173/api/posts/1/media/1');
+  response = new Response(null, { status: 204 });
+  assert.equal(await fetchAPI('/posts/1', { method: 'DELETE' }), null);
+  response = new Response('<html>Error</html>', { status: 502 });
+  await assert.rejects(fetchAPI('/posts'), { status: 502 });
+  response = new Response('{"error":"expired"}', { status: 401, headers: { 'Content-Type': 'application/json' } });
+  await assert.rejects(fetchAPI('/posts'), { status: 401 });
+  assert.equal(values.has('fella_token'), false);
+  assert.deepEqual(events, ['fella:session-expired']);
+  assert.equal(assetUrl('javascript:alert(1)'), '');
+  await assert.rejects(fetchAPI('https://untrusted.example/file'));
+});
