@@ -1,98 +1,98 @@
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const authService = require('../services/authService');
 
-const { getJwtSecret } = require('../config/jwt');
-
 class AuthController {
+    // POST /api/auth/register
     async register(req, res) {
-        const { username, email, password, full_name } = req.body;
-
-        if (!username || !email || !password || !full_name) {
-            return res.status(400).json({ error: 'Vui lòng điền đầy đủ thông tin!' });
-        }
-
         try {
-            const isExist = await authService.checkExistingUser(username, email);
-            if (isExist) {
-                return res.status(400).json({ error: 'Username hoặc Email đã tồn tại!' });
-            }
-
-            const hashedPassword = await bcrypt.hash(password, 10);
-            const newUserId = await authService.createUser(username, email, hashedPassword, full_name);
-
-            res.status(201).json({
-                message: 'Đăng ký tài khoản thành công!',
-                userId: newUserId
-            });
+            const result = await authService.register(req.body);
+            res.status(201).json(result);
         } catch (err) {
-            console.error('Lỗi Register:', err);
-            res.status(500).json({ error: err.message });
+            res.status(err.status || 500).json({ error: err.message });
         }
     }
 
+    // POST /api/auth/verify-otp
+    async verifyOtp(req, res) {
+        try {
+            const result = await authService.verifyOtp(req.body);
+            res.json(result);
+        } catch (err) {
+            res.status(err.status || 500).json({ error: err.message });
+        }
+    }
+
+    // POST /api/auth/resend-otp
+    async resendOtp(req, res) {
+        try {
+            const result = await authService.resendOtp(req.body.email);
+            res.json(result);
+        } catch (err) {
+            res.status(err.status || 500).json({ error: err.message });
+        }
+    }
+
+    // POST /api/auth/login
     async login(req, res) {
-        const { account, password } = req.body;
-
-        if (!account || !password) {
-            return res.status(400).json({ error: 'Vui lòng nhập tài khoản và mật khẩu!' });
-        }
-
         try {
-            const user = await authService.findUserByUsernameOrEmail(account);
-            if (!user) {
-                return res.status(400).json({ error: 'Tài khoản hoặc mật khẩu không chính xác!' });
-            }
+            const result = await authService.login(req.body);
 
-            const isPasswordMatch = await bcrypt.compare(password, user.password);
-            if (!isPasswordMatch) {
-                return res.status(400).json({ error: 'Tài khoản hoặc mật khẩu không chính xác!' });
-            }
-
-            const token = jwt.sign(
-                { id: user.id, username: user.username, role: user.role },
-                getJwtSecret(),
-                { expiresIn: '7d' }
-            );
-
-            const { password: _, ...userInfo } = user;
-            res.json({
-                message: 'Đăng nhập thành công!',
-                token: token,
-                user: userInfo
+            // Thiết lập HttpOnly Cookie an toàn tuyệt đối, chống XSS
+            res.cookie('fella_token', result.token, {
+                httpOnly: true,
+                sameSite: 'lax',
+                secure: process.env.NODE_ENV === 'production',
+                maxAge: 7 * 24 * 60 * 60 * 1000 // 7 ngày
             });
+
+            res.json(result);
         } catch (err) {
-            console.error('Lỗi Login:', err);
-            res.status(500).json({ error: err.message });
+            res.status(err.status || 500).json({
+                error: err.message,
+                requireVerify: err.requireVerify,
+                email: err.email
+            });
         }
     }
 
-    async updateAvatar(req, res) {
-        try {
-            const { userId } = req.body;
-            if (!req.file) {
-                return res.status(400).json({ error: 'Vui lòng chọn ảnh!' });
-            }
-
-            const avatarUrl = `/uploads/${req.file.filename}`;
-            await authService.updateAvatar(userId, avatarUrl);
-
-            return res.json({ message: 'Cập nhật thành công', avatar: avatarUrl });
-        } catch (err) {
-            return res.status(500).json({ error: err.message });
-        }
+    // POST /api/auth/logout
+    async logout(req, res) {
+        res.clearCookie('fella_token', {
+            httpOnly: true,
+            sameSite: 'lax',
+            secure: process.env.NODE_ENV === 'production'
+        });
+        res.json({ message: 'Đăng xuất thành công!' });
     }
 
+    // GET /api/auth/profile/:id
     async getProfile(req, res) {
         try {
-            const userId = req.params.id;
-            const user = await authService.getUserProfile(userId);
-            if (!user) {
-                return res.status(404).json({ error: 'Không tìm thấy người dùng!' });
-            }
+            const user = await authService.getProfile(req.params.id);
             res.json({ data: user });
         } catch (err) {
-            res.status(500).json({ error: err.message });
+            res.status(err.status || 500).json({ error: err.message });
+        }
+    }
+
+    // PUT /api/auth/profile
+    async updateProfile(req, res) {
+        try {
+            // req.user.id do authenticate middleware gán từ token
+            const result = await authService.updateProfile(req.user.id, req.body);
+            res.json(result);
+        } catch (err) {
+            res.status(err.status || 500).json({ error: err.message });
+        }
+    }
+
+    // POST /api/auth/update-avatar
+    async updateAvatar(req, res) {
+        try {
+            // req.user.id do authenticate middleware gán từ token -> Vá triệt để IDOR
+            const result = await authService.updateAvatar(req.user.id, req.file);
+            res.json(result);
+        } catch (err) {
+            res.status(err.status || 500).json({ error: err.message });
         }
     }
 }

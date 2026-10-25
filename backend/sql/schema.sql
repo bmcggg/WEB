@@ -8,6 +8,7 @@ CREATE TABLE users (
     avatar NVARCHAR(MAX),
     bio NVARCHAR(MAX),
     role NVARCHAR(20) CHECK(role IN ('ADMIN', 'USER')) DEFAULT 'USER',
+    is_verified BIT DEFAULT 0,
     created_at DATETIME2 DEFAULT GETDATE()
 );
 

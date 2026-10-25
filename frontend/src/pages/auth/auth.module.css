@@ -1,142 +1,332 @@
+/* --- AUTHENTICATION PAGES (OPEN SPLIT LAYOUT, NATURAL, NO GIANT BOX) --- */
 .authPage {
   min-height: 100vh;
   display: flex;
-  justify-content: center;
   align-items: center;
-  padding: 20px 12px;
+  justify-content: center;
+  background-color: var(--bg-page);
+  padding: 40px 16px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  box-sizing: border-box;
 }
 
-.auth-container {
-  background-color: #ffffff;
-  padding: 40px;
+/* 2 CỘT MỞ RỘNG TỰ NHIÊN, KHÔNG CÓ KHUNG TO BỌC LẠI */
+.splitLayout {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 960px;
+  gap: 56px;
+}
+
+/* CỘT THƯƠNG HIỆU BÊN TRÁI NẰM TỰ DO TRÊN NỀN */
+.brandCol {
+  flex: 1;
+  max-width: 480px;
+  padding-bottom: 30px;
+}
+
+.brandLogoWrapper {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.brandLogo {
+  color: var(--primary);
+  font-size: 50px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  line-height: 1;
+  margin: 0;
+  user-select: none;
+}
+
+.brandSlogan {
+  font-size: 24px;
+  line-height: 32px;
+  color: var(--text-primary);
+  font-weight: 400;
+  margin-top: 6px;
+}
+
+/* CỘT PHẢI CHỨA THẺ FORM ĐỘC LẬP */
+.formCol {
+  width: 396px;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.authCard {
+  background-color: var(--bg-card);
   border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
+  border: 1px solid var(--border-color);
+  padding: 24px 20px;
   width: 100%;
-  max-width: 400px;
+  box-sizing: border-box;
 }
 
-.auth-header {
-  text-align: center;
-  margin-bottom: 24px;
+.cardHeader {
+  margin-bottom: 18px;
+  text-align: left;
 }
 
-.auth-header h1 {
-  color: #1877f2;
-  font-size: 32px;
-  font-weight: bold;
-  margin-bottom: 8px;
+.cardTitle {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
 }
 
-.auth-header p {
-  color: #65676b;
+.cardSubtitle {
   font-size: 14px;
+  color: var(--text-secondary);
 }
 
-.form-group {
-  margin-bottom: 16px;
+/* CÁC FIELD NHẬP LIỆU */
+.fieldGroup {
+  margin-bottom: 14px;
+  width: 100%;
 }
 
-.form-group label {
+.fieldLabel {
   display: block;
-  margin-bottom: 6px;
-  font-size: 14px;
-  color: #333;
+  font-size: 13px;
   font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 6px;
 }
 
-.form-group input {
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
   width: 100%;
-  padding: 12px;
-  border: 1px solid #dddfe2;
-  border-radius: 6px;
-  font-size: 14px;
+}
+
+.formInput {
+  width: 100%;
+  padding: 12px 42px 12px 14px; /* Chừa khoảng trống bên phải cho icon mắt */
+  font-size: 15px;
+  color: var(--text-primary);
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
   outline: none;
-  transition: border-color 0.2s;
+  font-family: inherit;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  box-sizing: border-box;
 }
 
-.form-group input:focus {
-  border-color: #1877f2;
+.formInputNoEye {
+  padding-right: 14px;
 }
 
-.btn-primary {
+.formInput:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(24, 119, 242, 0.14);
+}
+
+.formInput::placeholder {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+/* NÚT CON MẮT ICON SVG TINH TẾ */
+.eyeIconBtn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: color 0.15s ease;
+}
+
+.eyeIconBtn:hover {
+  color: var(--text-primary);
+}
+
+/* NÚT HÀNH ĐỘNG CHÍNH */
+.btnPrimary {
   width: 100%;
-  padding: 12px;
-  background-color: #1877f2;
+  background-color: var(--primary);
   color: #ffffff;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 16px;
-  font-weight: bold;
+  font-weight: 700;
+  padding: 12px;
   cursor: pointer;
-  transition: background-color 0.2s;
-  margin-top: 8px;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+  margin-top: 6px;
 }
 
-.btn-primary:hover {
-  background-color: #166fe5;
+.btnPrimary:hover {
+  background-color: var(--primary-hover);
 }
 
-.auth-footer {
-  text-align: center;
-  margin-top: 20px;
-  font-size: 14px;
-  color: #65676b;
+.btnPrimary:active {
+  transform: scale(0.99);
 }
 
-.auth-footer a {
-  color: #1877f2;
+.btnPrimary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btnGreen {
+  display: inline-block;
+  background-color: #42b72a;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 10px 18px;
   text-decoration: none;
-  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
 }
 
-.auth-footer a:hover {
+.btnGreen:hover {
+  background-color: #36a420;
+}
+
+.divider {
+  height: 1px;
+  background-color: var(--divider);
+  margin: 18px 0;
+  width: 100%;
+}
+
+.footerRow {
+  text-align: center;
+}
+
+.footerLink {
+  color: var(--primary);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.footerLink:hover {
   text-decoration: underline;
 }
 
-.alert-message {
-  padding: 10px;
-  border-radius: 6px;
-  font-size: 14px;
-  margin-bottom: 16px;
-  display: none;
-}
-
-.alertVisible {
-  display: block;
-}
-
-.alert-error {
-  background-color: #ffebe9;
-  color: #d93025;
-  border: 1px solid #ffc0c0;
-}
-
-.alert-success {
-  background-color: #e6f4ea;
-  color: #137333;
-  border: 1px solid #b7e1cd;
-}
-
-.form-group input {
-  box-sizing: border-box;
+/* VERIFY OTP DIALOG */
+.dialogCard {
+  background-color: var(--bg-card);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--border-color);
+  padding: 28px 24px;
   width: 100%;
-  padding: 12px;
-  border: 1px solid #dddfe2;
-  border-radius: 6px;
+  max-width: 420px;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.dialogHeader {
+  margin-bottom: 20px;
+}
+
+.dialogHeader h1 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.dialogHeader p {
+  color: var(--text-secondary);
   font-size: 14px;
+  line-height: 1.45;
+}
+
+.otpBox {
+  width: 100%;
+  padding: 14px;
+  font-size: 26px;
+  letter-spacing: 10px;
+  text-align: center;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+  font-weight: 700;
   outline: none;
-  transition: border-color 0.2s;
-  background-color: #ffffff;
+  margin-bottom: 18px;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.form-group input:focus {
-  border-color: #1877f2;
+.otpBox:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(24, 119, 242, 0.14);
 }
 
-.form-group input:-webkit-autofill,
-.form-group input:-webkit-autofill:hover,
-.form-group input:-webkit-autofill:focus {
-  -webkit-box-shadow: 0 0 0px 1000px #ffffff inset !important;
-  -webkit-text-fill-color: #333333 !important;
-  transition: background-color 5000s ease-in-out 0s;
+.dialogFooter {
+  margin-top: 20px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.dialogFooter a {
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.dialogFooter a:hover {
+  text-decoration: underline;
+}
+
+.resendBtn {
+  background: transparent;
+  border: none;
+  color: var(--primary);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 4px;
+  text-decoration: underline;
+}
+
+@media (max-width: 850px) {
+  .splitLayout {
+    flex-direction: column;
+    gap: 28px;
+    text-align: center;
+  }
+  .brandCol {
+    max-width: 100%;
+    padding-bottom: 0;
+  }
+  .brandLogoWrapper {
+    justify-content: center;
+  }
+  .brandSlogan {
+    font-size: 20px;
+    line-height: 28px;
+  }
+  .formCol {
+    width: 100%;
+    max-width: 396px;
+  }
 }

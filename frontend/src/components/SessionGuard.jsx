@@ -6,7 +6,7 @@ export default function SessionGuard({ children }) {
   const navigate = useNavigate();
   useEffect(() => {
     const expire = () => navigate('/login', { replace: true });
-    const storage = () => { if (!localStorage.getItem('fella_token')) expire(); };
+    const storage = () => { if (!readUser()?.id) expire(); };
     window.addEventListener('fella:session-expired', expire);
     window.addEventListener('storage', storage);
     return () => {
@@ -14,5 +14,5 @@ export default function SessionGuard({ children }) {
       window.removeEventListener('storage', storage);
     };
   }, [navigate]);
-  return localStorage.getItem('fella_token') && readUser()?.id ? children : <Navigate to="/login" replace />;
+  return readUser()?.id ? children : <Navigate to="/login" replace />;
 }

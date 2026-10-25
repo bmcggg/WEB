@@ -29,7 +29,12 @@ export async function fetchAPI(endpoint, options = {}) {
   if (token) headers.set('Authorization', 'Bearer ' + token);
   let response;
   try {
-    response = await fetch(requestUrl(endpoint), { ...requestOptions, headers, cache: 'no-store' });
+    response = await fetch(requestUrl(endpoint), {
+      ...requestOptions,
+      headers,
+      credentials: 'include', // Tự động gửi & nhận HttpOnly Cookie fella_token an toàn
+      cache: 'no-store'
+    });
   } catch (error) {
     if (error.name === 'AbortError') throw error;
     throw new Error('Không kết nối được máy chủ. Vui lòng thử lại.', { cause: error });
@@ -44,10 +49,20 @@ export async function fetchAPI(endpoint, options = {}) {
     }
     const error = new Error(data?.error || 'Yêu cầu thất bại (' + response.status + ').');
     error.status = response.status;
+    error.data = data;
     throw error;
   }
   if (response.status === 204) return null;
   if (responseType === 'blob') return response.blob();
   if (!response.headers.get('content-type')?.includes('application/json')) throw new Error('Máy chủ trả dữ liệu không hợp lệ.');
   return response.json();
+}
+
+export async function logoutAPI() {
+  try {
+    await fetchAPI('/auth/logout', { method: 'POST' });
+  } catch (_) {}
+  localStorage.removeItem('fella_user');
+  localStorage.removeItem('fella_token');
+  window.dispatchEvent(new Event('fella:session-expired'));
 }

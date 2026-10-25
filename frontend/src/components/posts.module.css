@@ -1,42 +1,472 @@
 .composer, .modal {
-  background: #fff;
-  border: 1px solid #e0e5ed;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
   border-radius: 12px;
   padding: 20px;
-  box-shadow: 0 2px 6px #14264408;
+  box-shadow: var(--shadow);
+  color: var(--text-primary);
 }
-.composer { margin-bottom: 24px; }
-.label { display: block; font-weight: 600; margin-bottom: 12px; }
-.composer textarea, .editForm textarea { width: 100%; min-height: 110px; resize: vertical; background: #f8faff; }
-.toolbar { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
-.toolbar label { font-size: 13px; }
-.toolbar select { padding: 8px; }
+
+.composer {
+  margin-bottom: 24px;
+}
+
+.label {
+  display: block;
+  font-weight: 700;
+  font-size: 16px;
+  margin-bottom: 12px;
+  color: var(--text-primary);
+}
+
+/* KHÓA CỨNG Ô SOẠN THẢO TUS */
+.composer textarea, .editForm textarea {
+  width: 100%;
+  height: 95px;
+  min-height: 95px;
+  max-height: 95px;
+  resize: none !important;
+  background: var(--bg-input);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 15px;
+  line-height: 1.4;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.composer textarea:focus, .editForm textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(24, 119, 242, 0.2);
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.toolbar label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.toolbar select {
+  padding: 8px 12px;
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+}
+
 .toolbar button, .pagination button, .preview button, .editForm button, .error button {
-  padding: 9px 13px; border-radius: 7px; background: #e9eef6; color: #21344e; font-weight: 600;
+  padding: 9px 14px;
+  border-radius: 8px;
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
 }
-button.primary { background: #1877f2; color: #fff; }
-button.danger { background: #ba2635; color: #fff; }
-.hint, .preview span { font-size: 12px; color: #65676b; margin-top: 8px; }
-.error { color: #a71d2a; padding: 10px 0; overflow-wrap: anywhere; }
-.success { color: #157443; margin-top: 10px; }
-.previews { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
-.preview { width: 140px; display: flex; flex-direction: column; gap: 6px; border: 1px solid #dfe4ec; padding: 8px; border-radius: 8px; }
-.preview img { width: 100%; height: 90px; object-fit: cover; border-radius: 5px; }
-.preview span { overflow-wrap: anywhere; }
-.status { padding: 35px 16px; text-align: center; color: #65676b; background: #fff; border-radius: 10px; }
-.pagination { display: flex; align-items: center; justify-content: center; gap: 14px; margin: 24px 0; font-size: 14px; }
-.backdrop { position: fixed; inset: 0; background: #10213b88; z-index: 1200; display: grid; place-items: center; padding: 16px; }
-.modal { width: min(100%, 720px); max-height: 90dvh; overflow-y: auto; outline: none; }
-.modalHeader { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 20px; }
-.modalHeader h2 { font-size: 20px; }
-.modalHeader button { font-size: 26px; background: #edf1f6; border-radius: 50%; width: 36px; height: 36px; flex-shrink: 0; }
-.editForm { display: grid; gap: 12px; }
-.list button:disabled, .composer button:disabled, .modal button:disabled { opacity: .55; cursor: wait; }
-.list button:focus-visible, .composer button:focus-visible, .modal button:focus-visible { outline: 3px solid #1877f2; outline-offset: 3px; }
+
+.toolbar button:hover, .pagination button:hover, .preview button:hover {
+  background: var(--border-color);
+}
+
+button.primary {
+  background: var(--primary);
+  color: #fff;
+}
+
+button.primary:hover {
+  background: var(--primary-hover);
+}
+
+button.danger {
+  background: #dc3545;
+  color: #fff;
+}
+
+.hint, .preview span {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 8px;
+}
+
+.error {
+  color: #dc3545;
+  padding: 10px 0;
+  overflow-wrap: anywhere;
+}
+
+.success {
+  color: #28a745;
+  margin-top: 10px;
+  font-weight: 600;
+}
+
+.previews {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.preview {
+  width: 140px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-surface);
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.preview img {
+  width: 100%;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+.preview span {
+  overflow-wrap: anywhere;
+  color: var(--text-secondary);
+}
+
+.status {
+  padding: 35px 16px;
+  text-align: center;
+  color: var(--text-secondary);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin: 24px 0;
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: var(--modal-backdrop);
+  z-index: 1200;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  backdrop-filter: blur(2px);
+}
+
+.modal {
+  width: min(100%, 720px);
+  max-height: 90dvh;
+  overflow-y: auto;
+  outline: none;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 12px;
+}
+
+.modalHeader h2 {
+  font-size: 20px;
+  color: var(--text-primary);
+}
+
+.modalHeader button {
+  font-size: 20px;
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.editForm {
+  display: grid;
+  gap: 12px;
+}
+
+.list button:disabled, .composer button:disabled, .modal button:disabled {
+  opacity: .55;
+  cursor: wait;
+}
+
+.list button:focus-visible, .composer button:focus-visible, .modal button:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 3px;
+}
+
+/* --- FACEBOOK PROFILE & FEED COMPOSER CARD CHUẨN FACEBOOK --- */
+.fbComposerCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 12px 16px 10px;
+  box-shadow: var(--shadow);
+  margin-bottom: 16px;
+}
+
+.fbComposerTop {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.fbComposerAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--primary);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 16px;
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+  border: 1px solid var(--border-color);
+}
+
+.fbComposerPill {
+  flex: 1;
+  background-color: var(--bg-input);
+  color: var(--text-secondary);
+  border-radius: 20px;
+  padding: 10px 16px;
+  font-size: 15px;
+  cursor: pointer;
+  border: none;
+  text-align: left;
+  transition: background-color 0.15s ease;
+  user-select: none;
+}
+
+.fbComposerPill:hover {
+  background-color: var(--bg-hover);
+}
+
+.fbComposerDivider {
+  height: 1px;
+  background-color: var(--divider);
+  margin-bottom: 6px;
+}
+
+.fbComposerActions {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.fbActionBtn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.fbActionBtn:hover {
+  background-color: var(--bg-hover);
+}
+
+.iconLive {
+  color: #f3425f;
+  font-size: 18px;
+}
+
+.iconPhoto {
+  color: #45bd62;
+  font-size: 18px;
+}
+
+.iconReel {
+  color: #e4405f;
+  font-size: 18px;
+}
+
+/* MODAL TẠO BÀI VIẾT POPUP */
+.fbModalBackdrop {
+  position: fixed;
+  inset: 0;
+  background: var(--modal-backdrop);
+  backdrop-filter: blur(4px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.fbModalDialog {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: var(--shadow-float);
+  width: 100%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: popIn 0.2s ease-out;
+}
+
+.fbModalHeader {
+  position: relative;
+  text-align: center;
+  padding: 16px;
+  border-bottom: 1px solid var(--divider);
+}
+
+.fbModalTitle {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.fbModalCloseBtn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: var(--bg-hover);
+  color: var(--text-primary);
+  border: none;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.fbModalBody {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.fbUserRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.fbUserName {
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--text-primary);
+}
+
+.fbPrivacySelect {
+  background-color: var(--bg-hover);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  outline: none;
+  margin-top: 2px;
+}
+
+.fbTextarea {
+  width: 100%;
+  height: 100px;
+  min-height: 100px;
+  max-height: 100px;
+  resize: none !important;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 17px;
+  color: var(--text-primary);
+  font-family: inherit;
+  line-height: 1.4;
+  padding: 4px 0;
+}
+
+.fbMediaDropzone {
+  border: 1px dashed var(--border-color);
+  background-color: var(--bg-input);
+  border-radius: 8px;
+  padding: 14px;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.fbMediaDropzone:hover {
+  background-color: var(--bg-hover);
+}
+
+.fbSubmitBtn {
+  width: 100%;
+  background-color: var(--primary);
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  margin-top: 4px;
+}
+
+.fbSubmitBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 @media (max-width: 480px) {
-  .composer, .modal { padding: 14px; }
-  .backdrop { padding: 8px; }
-  .toolbar { align-items: stretch; }
-  .pagination { gap: 8px; }
-  .pagination button { padding: 8px; }
+  .fbComposerActions {
+    flex-wrap: wrap;
+  }
 }

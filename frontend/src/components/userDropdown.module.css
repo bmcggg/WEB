@@ -1,0 +1,156 @@
+.dropdownMenu {
+  position: absolute;
+  top: 52px;
+  right: 16px;
+  width: 320px;
+  background-color: var(--bg-surface);
+  border-radius: 10px;
+  box-shadow: 0 12px 28px 0 rgba(0, 0, 0, 0.2), 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+  padding: 12px;
+  z-index: 1500;
+  border: 1px solid var(--border-color);
+  animation: fadeInMenu 0.15s ease-out;
+}
+
+@keyframes fadeInMenu {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.profileCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  user-select: none;
+}
+
+.profileCard:hover {
+  background-color: var(--bg-hover);
+}
+
+.profileAvatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: var(--primary);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 20px;
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+  border: 1px solid var(--border-color);
+}
+
+.profileInfo {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.profileName {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.profileSub {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.divider {
+  height: 1px;
+  background-color: var(--divider);
+  margin: 8px 4px;
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  color: var(--text-primary);
+  user-select: none;
+}
+
+.menuItem:hover {
+  background-color: var(--bg-hover);
+}
+
+.iconCircle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: var(--bg-hover);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.menuLabel {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* TOGGLE SWITCH CHO DARK MODE */
+.switch {
+  width: 44px;
+  height: 24px;
+  background-color: #ced0d4;
+  border-radius: 12px;
+  position: relative;
+  transition: background-color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.switchActive {
+  background-color: var(--primary);
+}
+
+.switchHandle {
+  width: 20px;
+  height: 20px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: transform 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.switchActive .switchHandle {
+  transform: translateX(20px);
+}
+
+.logoutItem:hover {
+  background-color: rgba(220, 53, 69, 0.1);
+}
+
+.logoutIcon {
+  background-color: rgba(220, 53, 69, 0.12);
+  color: #dc3545;
+}

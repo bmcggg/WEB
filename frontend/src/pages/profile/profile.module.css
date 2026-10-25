@@ -1,118 +1,500 @@
-.container {
-  max-width: 680px;
-  margin: 20px auto;
-  padding: 0 12px;
+.profilePage {
+  min-height: 100vh;
+  background-color: var(--bg-page);
+  color: var(--text-primary);
 }
 
-.profileCard {
-  background: #fff;
-  padding: 24px 20px 16px;
-  border-radius: 10px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  margin-bottom: 20px;
+/* KHỐI ĐẦU PROFILE */
+.headerContainer {
+  background-color: var(--bg-card);
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: var(--shadow);
 }
 
-.avatarWrapper {
+/* KHUNG ẢNH BÌA CHUẨN FACEBOOK */
+.coverWrapper {
+  max-width: 1095px;
+  height: 350px;
+  margin: 0 auto;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  background: linear-gradient(135deg, #1c1e21 0%, #2b3a4a 50%, #151f28 100%);
+  background-size: cover;
+  background-position: center;
   position: relative;
-  width: 110px;
-  height: 110px;
-  margin: 0 auto 14px;
+  overflow: hidden;
 }
-.avatar {
-  width: 40px;
-  height: 40px;
+
+.btnChangeCover {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  background-color: rgba(255, 255, 255, 0.85);
+  color: #050505;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.15s ease;
+  backdrop-filter: blur(4px);
+}
+
+.btnChangeCover:hover {
+  background-color: #ffffff;
+}
+
+/* KHỐI THÔNG TIN VÀ AVATAR TRÒN LỚN ĐÈ LÊN ẢNH BÌA */
+.profileHeaderContent {
+  max-width: 1050px;
+  margin: 0 auto;
+  padding: 0 16px;
+  position: relative;
+}
+
+.avatarOverlapWrapper {
+  position: relative;
+  width: 168px;
+  height: 168px;
+  margin-top: -84px;
+  margin-bottom: 14px;
+}
+
+.avatarLg {
+  width: 168px;
+  height: 168px;
   border-radius: 50%;
-  background-color: #1877f2;
-  color: #fff;
+  background-color: var(--primary);
+  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
-  font-size: 16px;
+  font-size: 64px;
+  font-weight: 700;
   background-size: cover;
   background-position: center;
-  flex-shrink: 0;
+  border: 4px solid var(--bg-card);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
-.avatarLg {
-  width: 110px;
-  height: 110px;
-  font-size: 42px;
-}
+
 .changeAvatarBtn {
   position: absolute;
-  bottom: 2px;
-  right: 2px;
-  background-color: #e4e6eb;
-  width: 34px;
-  height: 34px;
+  bottom: 8px;
+  right: 8px;
+  background-color: var(--bg-hover);
+  color: var(--text-primary);
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
-  border: 2px solid #fff;
+  border: 3px solid var(--bg-card);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 15px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-  transition: background-color 0.2s;
+  font-size: 18px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.15s ease;
 }
+
 .changeAvatarBtn:hover {
-  background-color: #d8dadf;
+  background-color: var(--border-color);
 }
+
 .hiddenInput {
   display: none;
 }
-.profileName {
-  font-size: 22px;
-  font-weight: 700;
-  color: #050505;
-}
-.profileUsername {
-  color: #65676b;
-  font-size: 14px;
-  margin-bottom: 6px;
-}
-.profileBio {
-  color: #050505;
-  font-size: 14px;
-  margin-bottom: 16px;
-  font-style: italic;
-}
-.statsBar {
+
+/* HỌ TÊN VÀ NÚT TÁC VỤ */
+.nameAndActions {
   display: flex;
-  justify-content: space-around;
-  border-top: 1px solid #e4e6eb;
-  padding-top: 12px;
-  margin-top: 12px;
-}
-.statItem {
-  text-align: center;
-}
-.statValue {
-  font-weight: 700;
-  font-size: 18px;
-  color: #1877f2;
-}
-.statLabel {
-  font-size: 12px;
-  color: #65676b;
-}
-.sectionTitle {
-  font-size: 18px;
-  font-weight: 700;
-  margin-bottom: 12px;
-}
-.emptyPosts {
-  text-align: center;
-  color: #65676b;
-  padding: 20px;
-}
-.error {
-  color: #d93025;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding-bottom: 16px;
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
-@media (max-width: 480px) {
-  .profileCard {
-    padding: 20px 14px 14px;
+.nameDetails {
+  flex: 1;
+  min-width: 260px;
+}
+
+.profileName {
+  font-size: 30px;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.2;
+  margin-bottom: 4px;
+}
+
+.statsSubtitle {
+  color: var(--text-secondary);
+  font-size: 15px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.dot {
+  font-size: 12px;
+}
+
+.profileBioText {
+  color: var(--text-primary);
+  font-size: 15px;
+  line-height: 1.4;
+  margin-top: 4px;
+}
+
+.headerButtons {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.btnPrimaryAction {
+  background-color: var(--bg-hover);
+  color: var(--text-primary);
+  border: none;
+  padding: 9px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.btnPrimaryAction:hover {
+  background-color: var(--border-color);
+}
+
+.btnLogoutAction {
+  background-color: rgba(220, 53, 69, 0.12);
+  color: #dc3545;
+  border: none;
+  padding: 9px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.btnLogoutAction:hover {
+  background-color: rgba(220, 53, 69, 0.2);
+}
+
+/* THANH TABS */
+.divider {
+  height: 1px;
+  background-color: var(--divider);
+  margin-top: 8px;
+}
+
+.tabsNav {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+}
+
+.tabItem {
+  background: transparent;
+  border: none;
+  padding: 14px 16px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: color 0.15s ease, border-color 0.15s ease;
+  white-space: nowrap;
+}
+
+.tabItem:hover {
+  background-color: var(--bg-hover-soft);
+  border-radius: 6px 6px 0 0;
+}
+
+.tabItemActive {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
+/* BỐ CỤC 2 CỘT PROFILE */
+.profileBodyLayout {
+  max-width: 1050px;
+  margin: 16px auto;
+  padding: 0 16px;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.leftCol {
+  width: 360px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex-shrink: 0;
+}
+
+.rightCol {
+  flex: 1;
+  min-width: 0;
+}
+
+/* CARD CHUNG */
+.card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: var(--shadow);
+}
+
+.cardTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+}
+
+.cardHeaderFlex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.cardSubText {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.btnTextLink {
+  background: transparent;
+  border: none;
+  color: var(--primary);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.introList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.introItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.introIcon {
+  font-size: 18px;
+  width: 24px;
+  display: flex;
+  justify-content: center;
+}
+
+.btnSecondaryFull {
+  width: 100%;
+  background-color: var(--bg-hover);
+  color: var(--text-primary);
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.btnSecondaryFull:hover {
+  background-color: var(--border-color);
+}
+
+.highlightPlaceholder {
+  padding: 8px 0;
+}
+
+/* LƯỚI BẠN BÈ 3x3 */
+.friendsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.friendGridItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: left;
+}
+
+.friendThumb {
+  aspect-ratio: 1;
+  border-radius: 8px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 20px;
+  box-shadow: var(--shadow);
+}
+
+.friendName {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* PHẦN BÀI VIẾT BÊN PHẢI */
+.postSectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+}
+
+.sectionTitle {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.postFilterActions {
+  display: flex;
+  gap: 8px;
+}
+
+.btnFilter {
+  background-color: var(--bg-hover);
+  color: var(--text-primary);
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.btnFilter:hover {
+  background-color: var(--border-color);
+}
+
+/* FORM CHỈNH SỬA THÔNG TIN */
+.editFormCard {
+  background-color: var(--bg-hover-soft);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 16px;
+  margin: 12px 0;
+}
+
+.formLabel {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.formInput {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+  font-size: 14px;
+}
+
+.bioTextarea {
+  width: 100%;
+  height: 85px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+  padding: 8px 12px;
+  font-size: 14px;
+  resize: none !important;
+  font-family: inherit;
+  line-height: 1.4;
+}
+
+.charCounter {
+  text-align: right;
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.btnSaveEdit {
+  background-color: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btnCancelEdit {
+  background-color: var(--bg-hover);
+  color: var(--text-primary);
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+@media (max-width: 900px) {
+  .coverWrapper {
+    height: 220px;
+    border-radius: 0;
+  }
+  .avatarOverlapWrapper {
+    margin-top: -60px;
+    width: 120px;
+    height: 120px;
+  }
+  .avatarLg {
+    width: 120px;
+    height: 120px;
+    font-size: 46px;
+  }
+  .profileName {
+    font-size: 24px;
+  }
+  .profileBodyLayout {
+    flex-direction: column;
+    padding: 0 10px;
+  }
+  .leftCol {
+    width: 100%;
   }
 }

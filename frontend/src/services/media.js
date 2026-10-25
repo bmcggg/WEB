@@ -1,9 +1,9 @@
-import { fetchAPI } from './api';
+import { fetchAPI, readUser } from './api';
 
 const cache = new Map();
 
 export function acquireMedia(url) {
-  const key = localStorage.getItem('fella_token') + ':' + url;
+  const key = (readUser()?.id || 'guest') + ':' + url;
   let entry = cache.get(key);
   if (!entry) {
     const controller = new AbortController();

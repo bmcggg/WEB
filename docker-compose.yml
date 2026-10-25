@@ -1,0 +1,29 @@
+services:
+  # 1. Cơ sở dữ liệu SQL Server 2022
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: fella-db
+    platform: linux/amd64
+    user: root
+    restart: unless-stopped
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=${DB_PASSWORD:-StrongPassw0rd!2026}
+    ports:
+      - "1433:1433"
+    volumes:
+      - sql_data:/var/opt/mssql/data
+
+  # 2. Redis Cache (Lưu OTP 6 số tự hủy sau 10 phút)
+  redis:
+    image: redis:alpine
+    container_name: fella-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+volumes:
+  sql_data:
+  redis_data:

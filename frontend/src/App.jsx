@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
+import VerifyOtp from "./pages/auth/VerifyOtp";
 import Feed from "./pages/feed/Feed";
 import Profile from "./pages/profile/Profile";
 import SavedPosts from "./pages/feed/SavedPosts";
@@ -13,6 +14,7 @@ export default function App() {
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/verify-otp" element={<VerifyOtp />} />
         <Route path="/feed" element={<SessionGuard><Feed /></SessionGuard>} />
         <Route path="/profile" element={<SessionGuard><Profile /></SessionGuard>} />
         <Route path="/saved" element={<SessionGuard><SavedPosts /></SessionGuard>} />

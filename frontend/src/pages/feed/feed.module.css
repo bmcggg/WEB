@@ -1,57 +1,39 @@
-.feedContainer {
-  max-width: 680px;
-  margin: 20px auto;
-  padding: 0 12px;
+.pageWrapper {
+  min-height: 100vh;
+  background-color: var(--bg-page);
 }
 
-.heading { font-size: 25px; margin-bottom: 4px; }
-.subtitle { color: #65676b; margin-bottom: 20px; font-size: 14px; }
+.feedLayout {
+  display: flex;
+  justify-content: center;
+  padding: 16px 16px 32px 280px; /* Offset cho sidebar 280px */
+  width: 100%;
+  box-sizing: border-box;
+}
 
-.createPostCard {
-  background-color: #ffffff;
-  border-radius: 8px;
-  padding: 16px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+.feedColumn {
+  width: 100%;
+  max-width: 680px;
+}
+
+.feedHeader {
   margin-bottom: 16px;
 }
 
-.createPostCard textarea {
-  width: 100%;
-  height: 80px;
-  resize: none;
-  font-size: 15px;
-  border: 1px solid #ccd0d5;
-  border-radius: 6px;
-  padding: 8px;
-  outline: none;
-  font-family: inherit;
+.heading {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 2px;
 }
 
-.createPostCard textarea:focus {
-  border-color: #1877f2;
+.subtitle {
+  color: var(--text-secondary);
+  font-size: 14px;
 }
 
-.postActions {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 10px;
-}
-
-.btnPost {
-  background-color: #1877f2;
-  color: white;
-  border: none;
-  padding: 8px 20px;
-  border-radius: 6px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.btnPost:hover {
-  background-color: #166fe5;
-}
-
-.statusText {
-  text-align: center;
-  color: #65676b;
+@media (max-width: 900px) {
+  .feedLayout {
+    padding: 12px 10px;
+  }
 }

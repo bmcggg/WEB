@@ -37,8 +37,19 @@ async function initDatabase() {
                 SELECT OBJECT_ID(N'dbo.users', N'U') AS table_id
             `);
 
-            if (checkTable.recordset[0].table_id !== null) 
+            if (checkTable.recordset[0].table_id !== null) {
+                // Đảm bảo cột is_verified tồn tại nếu bảng users đã được tạo trước đó
+                await appPool.request().query(`
+                    IF NOT EXISTS (
+                        SELECT 1 FROM sys.columns 
+                        WHERE object_id = OBJECT_ID(N'dbo.users') AND name = 'is_verified'
+                    )
+                    BEGIN
+                        ALTER TABLE dbo.users ADD is_verified BIT DEFAULT 0;
+                    END
+                `);
                 return;
+            }
             
             const schemaPath = path.join(__dirname, "..", "sql", "schema.sql");
             let schema = fs.readFileSync(schemaPath, "utf8");

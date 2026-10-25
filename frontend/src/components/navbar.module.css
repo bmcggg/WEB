@@ -2,79 +2,196 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 20px;
-  background-color: #ffffff;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  height: 56px;
+  padding: 0 16px;
+  background-color: var(--bg-surface);
+  box-shadow: var(--shadow);
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 1000;
+  border-bottom: 1px solid var(--border-color);
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
-.logo {
-  font-size: 24px;
-  font-weight: bold;
-  color: #1877f2;
+.navLeft {
+  display: flex;
+  align-items: center;
+}
+
+/* KHỐI BRAND 264px ĐỂ THANH SEARCH NẰM TẠI 280px (THẲNG HÀNG VỚI SIDEBAR BÊN DƯỚI) */
+.brandWrapper {
+  width: 264px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.brandLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
   cursor: pointer;
   user-select: none;
 }
 
-.userInfo {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+.brandText {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--primary);
+  letter-spacing: -0.5px;
 }
 
-.userProfileLink {
-  text-decoration: none;
+/* THANH TÌM KIẾM DẠNG VIÊN THUỐC KÉO DÀI */
+.searchWrapper {
   display: flex;
   align-items: center;
-  gap: 8px;
+  background-color: var(--bg-input);
+  border-radius: 50px;
+  padding: 0 16px;
+  height: 40px;
+  width: 420px;
+  border: none !important;
+  outline: none !important;
+  transition: width 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+  z-index: 1001;
+}
+
+.searchWrapperActive {
+  width: 480px;
+  background-color: var(--bg-surface);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  border: none !important;
+  outline: none !important;
+}
+
+.searchBackdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(2px);
+  z-index: 990;
+  animation: fadeIn 0.15s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.searchIcon {
+  font-size: 14px;
+  margin-right: 10px;
+  color: var(--text-secondary);
+  user-select: none;
+}
+
+.searchInput {
+  border: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+  font-size: 15px;
+  color: var(--text-primary);
+  width: 100%;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.searchInput:focus {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.searchInput::placeholder {
+  color: var(--text-secondary);
+}
+
+/* KHỐI PHẢI */
+.navRight {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+}
+
+.iconBtn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--bg-hover);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  cursor: pointer;
+  border: none;
+  color: var(--text-primary);
+  transition: background-color 0.15s ease;
+}
+
+.iconBtn:hover {
+  background-color: var(--border-color);
+}
+
+.avatarTriggerWrapper {
+  position: relative;
+}
+
+.avatarBtn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 2px;
+  border-radius: 24px;
+  transition: background-color 0.15s ease;
+}
+
+.avatarBtn:hover, .avatarBtnActive {
+  background-color: var(--bg-hover);
 }
 
 .avatar {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-size: cover;
-  background-position: center;
-  background-color: #1877f2;
-  color: white;
+  background-color: var(--primary);
+  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
+  font-weight: 700;
+  font-size: 16px;
+  background-size: cover;
+  background-position: center;
+  border: 1px solid var(--border-color);
 }
 
-.avatarSm {
-  width: 32px;
-  height: 32px;
+.chevronIcon {
   font-size: 14px;
+  color: var(--text-secondary);
+  padding-right: 4px;
 }
 
-.userName {
-  font-weight: bold;
-  color: #050505;
+@media (max-width: 900px) {
+  .brandWrapper {
+    width: auto;
+    margin-right: 12px;
+  }
+  .searchWrapper {
+    width: 220px;
+  }
+  .searchWrapperActive {
+    width: 260px;
+  }
 }
 
-.btnLogout {
-  background-color: #e4e6eb;
-  color: #050505;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.btnLogout:hover {
-  background-color: #d8dadf;
-}
-
-.logo:focus-visible, .userProfileLink:focus-visible, .btnLogout:focus-visible { outline: 3px solid #1877f2; outline-offset: 3px; }
-@media (max-width: 480px) {
-  .navbar { padding: 10px 12px; }
-  .userInfo { gap: 8px; }
-  .userName { display: none; }
-  .btnLogout { padding: 8px; }
+@media (max-width: 600px) {
+  .searchWrapper {
+    display: none;
+  }
 }
