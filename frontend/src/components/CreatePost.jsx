@@ -55,7 +55,7 @@ export default function CreatePost({ onCreated }) {
         <button type="button" disabled={busy} onClick={() => setFiles((current) => current.filter((_, position) => position !== index))} aria-label={'Bỏ tệp ' + file.name}>Bỏ</button>
       </div>)}</div>
       <div className={styles.toolbar}>
-        <input ref={input} type="file" accept=".jpg,.jpeg,.png,.webp,.pdf" multiple hidden onChange={chooseFiles} disabled={busy} />
+        <input ref={input} type="file" accept=".jpg,.jpeg,.png,.webp,.pdf,.mp4,.mp3,.wav" multiple hidden onChange={chooseFiles} disabled={busy} />
         <button type="button" disabled={busy} onClick={() => input.current.click()}>Thêm ảnh / PDF</button>
         <label>Ai được xem? <select value={privacy} disabled={busy} onChange={(event) => setPrivacy(event.target.value)}><option value="PUBLIC">Công khai</option><option value="PRIVATE">Chỉ mình tôi</option></select></label>
         <button type="submit" disabled={busy} className={styles.primary}>{busy ? 'Đang đăng…' : 'Đăng bài'}</button>

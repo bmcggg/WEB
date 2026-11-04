@@ -1,0 +1,399 @@
+/* Khu vực bình luận */
+.commentSection {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    color: #1c1e21;
+}
+.commentActions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    width: 100%;
+    gap: 10px;
+    margin-top: 8px;
+}
+/* Thu gọn khu vực Reaction */
+.commentActions > div:first-child {
+    flex: 0 0 auto;
+    width: auto;
+    min-width: 0;
+}
+.replyButton {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 4px;
+    border: none;
+    background: transparent;
+    color: #65676b;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+}
+/* Danh sách bình luận */
+.commentList {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+}
+
+.commentItem {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    width: 100%;
+    min-width: 0;
+}
+
+/* Avatar người bình luận */
+.avatarLink {
+    display: inline-block;
+    flex-shrink: 0;
+    text-decoration: none;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    background-color: #1877f2;
+    color: white;
+    display: flex;
+    align-items: center;
+    object-fit: cover;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.toolbar { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.toolbar label { font-size: 13px; }
+.toolbar select { padding: 8px; }
+.toolbar button, .pagination button, .preview button, .editForm button, .error button {
+  padding: 9px 13px; border-radius: 7px; background: #e9eef6; color: #21344e; font-weight: 600;
+}
+button.danger { background: #ba2635; color: #fff; }
+.avatarSm {
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+}
+
+/* Bong bóng bình luận */
+.commentBubble {
+    flex: 1;
+    min-width: 0;
+    padding: 10px 12px;
+    background-color: #f0f2f5;
+    border-radius: 12px;
+    overflow-wrap: anywhere;
+}
+
+/* Tên người bình luận */
+.commentAuthor {
+    font-size: 15px;
+   font-weight: bold;
+}
+
+/* Nội dung bình luận */
+.commentContent {
+    color: #1c1e21;
+    font-size: 15px;
+    line-height: 1.4;
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+}
+
+/* Nút xóa bình luận */
+.deleteButton {
+    flex-shrink: 0;
+    border: none;
+    background: transparent;
+    color: #dc2626;
+    cursor: pointer;
+    padding: 2px 4px;
+    margin-top: 8px;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.deleteButton:hover {
+    background-color: #e4e6eb;
+}
+
+.deleteButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Form nhập bình luận */
+.commentForm {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    min-width: 0;
+    margin-top: 4px;
+    padding-top: 12px;
+    border-top: 1px solid #e4e6eb;
+}
+
+/* Ô nhập nội dung */
+.commentInput {
+    flex: 1;
+    min-width: 0;
+    min-height: 38px;
+    max-height: 120px;
+    padding: 9px 12px;
+    border: 1px solid #e4e6eb;
+    border-radius: 20px;
+    outline: none;
+    background-color: #f0f2f5;
+    color: #1c1e21;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.4;
+    resize: vertical;
+    overflow-y: auto;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.commentInput::placeholder {
+    color: #65676b;
+}
+
+.commentInput:focus {
+    border-color: #1877f2;
+    background-color: #ffffff;
+}
+
+/* Nút gửi bình luận */
+.sendButton {
+    flex-shrink: 0;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    background: #edf2f8;
+    color: #1f4e83;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.sendButton:hover:not(:disabled) {
+    background-color: #dce7f5;
+}
+
+.sendButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+/* Khu vực nhập bình luận */
+.commentFormMain {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Ô nhập bình luận và nút + */
+.commentInputWrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    border-radius: 22px;
+    padding: 4px 8px 4px 12px;
+}
+
+.commentInputWrapper .commentInput {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    resize: vertical;
+}
+
+/* Nút đính kèm */
+.attachButton {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    border: none;
+    border-radius: 50%;
+    background: #e5e7eb;
+    color: #2563eb;
+    font-size: 24px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.attachButton:hover {
+    background: #dbeafe;
+}
+
+.attachButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Danh sách file xem trước */
+.commentPreviewList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+/* Từng file */
+.commentPreviewItem {
+    position: relative;
+    width: 90px;
+    height: 90px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #e5e7eb;
+}
+
+.commentPreviewItem img,
+.commentPreviewItem video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Nút xóa file */
+.removePreview {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 23px;
+    height: 23px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.removePreview:hover {
+    background: #dc2626;
+}
+/* Thông báo lỗi */
+.actionError {
+    margin: 0;
+    padding: 10px 12px;
+    border-radius: 6px;
+    background-color: #fff0f0;
+    color: #b42332;
+    font-size: 13px;
+    line-height: 1.5;
+}
+/* Khu vực media trong bình luận */
+.commentMediaImage,
+.commentMediaVideo {
+    display: block;
+    max-width: 100%;
+    width: auto;
+    max-height: 400px;
+    margin-top: 10px;
+    border-radius: 10px;
+    object-fit: contain;
+}
+
+.commentMediaImage {
+    cursor: pointer;
+}
+
+.commentMediaVideo {
+    width: 100%;
+    background: #000;
+}
+
+/* Trạng thái đang tải */
+.commentMediaPlaceholder {
+    margin-top: 10px;
+    padding: 20px;
+    background: #f3f4f6;
+    border-radius: 10px;
+    color: #6b7280;
+    font-size: 13px;
+    text-align: center;
+}
+
+/* Lỗi tải media */
+.commentMediaError {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+    color: #dc2626;
+    font-size: 13px;
+}
+
+.commentMediaError button {
+    color: #2563eb;
+    cursor: pointer;
+}
+
+@media (max-width: 600px) {
+    .commentMediaImage,
+    .commentMediaVideo {
+        max-height: 300px;
+    }
+}
+/* Khu vực nội dung bình luận và các câu trả lời */
+.commentMain {
+    flex: 1;
+    min-width: 0;
+}
+.replyButton:hover {
+    color: #1877f2;
+    text-decoration: underline;
+}
+
+/* Danh sách câu trả lời */
+.replyList {
+    margin-top: 10px;
+    margin-left: 16px;
+    padding-left: 12px;
+    border-left: 2px solid #e4e6eb;
+}
+
+/* Thông báo đang trả lời */
+.replyingNotice {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 8px 12px;
+    margin-bottom: 8px;
+    background: #f0f2f5;
+    border-radius: 8px;
+    color: #65676b;
+    font-size: 13px;
+}
+
+.replyingNotice button {
+    border: none;
+    background: transparent;
+    color: #1877f2;
+    font-weight: 600;
+    cursor: pointer;
+}

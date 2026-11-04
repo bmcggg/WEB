@@ -1,0 +1,306 @@
+.container {
+    background: #fff;
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+.heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+.headingTitle {
+    font-size: 16px;
+    color: #1c1e21;
+}
+.addButton {
+    border: none;
+    border-radius: 6px;
+    padding: 7px 12px;
+    background: #1877f2;
+    color: #fff;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+.addButton:hover:not(:disabled) {
+    background: #166fe5;
+}
+.addButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+.error {
+    color: #d93025;
+    font-size: 13px;
+    margin: 8px 0;
+}
+.list {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: thin;
+}
+.storyItem {
+    flex: 0 0 76px;
+    width: 76px;
+    border: none;
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+.storyItem:focus-visible,
+.addButton:focus-visible,
+.closeButton:focus-visible,
+.navButton:focus-visible {
+    outline: 2px solid #1877f2;
+    outline-offset: 3px;
+}
+.addAvatar {
+    width: 62px;
+    height: 62px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    position: relative;
+    background: #e4e6eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 600;
+    color: #333;
+}
+.plus {
+    position: absolute;
+    right: -2px;
+    bottom: -2px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #1877f2;
+    color: #fff;
+    border: 2px solid #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 19px;
+    line-height: 1;
+}
+.storyRing {
+    width: 66px;
+    height: 66px;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    border-radius: 50%;
+    padding: 3px;
+    border: 3px solid #1877f2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.avatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+.fallbackAvatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: #e4e6eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 600;
+    color: #333;
+}
+.storyName {
+    display: block;
+    width: 100%;
+    font-size: 12px;
+    max-width: 76px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: center;
+    color: #333;
+}
+.status {
+    color: #65676b;
+    font-size: 13px;
+    padding: 12px;
+    white-space: nowrap;
+}
+/* Lớp nền modal */
+.overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px;
+}
+/* Khung xem Story */
+.viewer {
+    width: 100%;
+    max-width: 440px;
+    height: 90vh;
+    max-height: 780px;
+    background: #111;
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+.viewerHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    color: #fff;
+    z-index: 1;
+    flex-shrink: 0;
+}
+.viewerUser {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+.viewerAvatar,
+.viewerFallback {
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    border-radius: 50%;
+}
+.viewerAvatar {
+    object-fit: cover;
+}
+.viewerFallback {
+    background: #777;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+}
+.time {
+    font-size: 11px;
+    color: #ccc;
+    margin-top: 3px;
+}
+.closeButton {
+    border: none;
+    background: transparent;
+    color: #fff;
+    font-size: 30px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0 4px;
+}
+.mediaContainer {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+.media {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+.navButton {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 38px;
+    height: 48px;
+    border: none;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.4);
+    color: #fff;
+    font-size: 32px;
+    line-height: 1;
+    cursor: pointer;
+    z-index: 2;
+}
+.navButton:hover:not(:disabled) {
+    background: rgba(0, 0, 0, 0.65);
+}
+.navButton:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+.previousButton {
+    left: 8px;
+}
+.nextButton {
+    right: 8px;
+}
+/* Responsive điện thoại */
+@media (max-width: 480px) {
+    .container {
+        padding: 10px;
+        border-radius: 8px;
+    }
+
+    .list {
+        gap: 10px;
+    }
+
+    .viewer {
+        width: 100%;
+        height: 90dvh;
+        max-height: none;
+        border-radius: 8px;
+    }
+
+    .overlay {
+        padding: 6px;
+    }
+}
+.mediaStatus {
+    color: #fff;
+    font-size: 14px;
+}
+
+.mediaError {
+    color: #ff6b6b;
+    font-size: 14px;
+    text-align: center;
+    padding: 16px;
+}
+.storyReaction {
+    flex-shrink: 0;
+    padding: 10px 14px;
+    background: #111;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 48px;
+}
+.deleteBtn{
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    font-size: 17px;
+    cursor: pointer;
+}

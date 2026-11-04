@@ -3,13 +3,17 @@ import Navbar from '../../components/NavBar';
 import CreatePost from '../../components/CreatePost';
 import PostList from '../../components/PostList';
 import styles from './feed.module.css';
-
+import StoryBar from '../../components/StoryBar';
+import { readUser } from '../../services/api';
 export default function Feed() {
   const [revision, setRevision] = useState(0);
   return (
     <>
       <Navbar />
       <main className={styles.feedContainer}>
+       
+        <StoryBar currentUser={readUser()} />
+        <PostList endpoint="/posts" />
         <h1 className={styles.heading}>Bảng tin</h1>
         <p className={styles.subtitle}>Những chia sẻ mới từ cộng đồng Fella</p>
         <CreatePost onCreated={() => setRevision((current) => current + 1)} />

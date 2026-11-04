@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom';
 import { assetUrl } from '../services/api';
 import PostMedia from './PostMedia';
 import styles from './PostCard.module.css';
+import Comment from './Comment'
+import Reaction from './Reaction'
 
 export default function PostCard({ post, currentUser, onSaveToggle, onEdit, onDelete, onOpenDetail, busy = false }) {
   const owned = Number(currentUser?.id) === post.user_id;
@@ -28,12 +30,19 @@ export default function PostCard({ post, currentUser, onSaveToggle, onEdit, onDe
       <div className={styles.mediaGrid}>
         {(post.media || []).map((media) => <PostMedia key={media.id} media={media} />)}
       </div>
-      <footer className={styles.actions}>
+      <div className="px-4 py-2 border-t">
+        <Reaction  targetType="post" postId={post.id} currentUser={currentUser} />
+      </div>
+
+      <div className={styles.actions}>
         {onOpenDetail && <button onClick={() => onOpenDetail(post)}>Xem chi tiết</button>}
         {onSaveToggle && <button disabled={busy} aria-pressed={post.is_saved} onClick={() => onSaveToggle(post)}>{post.is_saved ? 'Bỏ lưu' : 'Lưu bài'}</button>}
         {owned && onEdit && <button disabled={busy} onClick={() => onEdit(post)}>Sửa</button>}
         {owned && onDelete && <button disabled={busy} className={styles.danger} onClick={() => onDelete(post)}>Xóa</button>}
-      </footer>
+      </div>
+      <div className={styles.commentsArea}>
+    <Comment postId={post.id} currentUser={currentUser} />
+</div>
     </article>
   );
 }

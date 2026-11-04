@@ -87,7 +87,13 @@ export default function PostList({ endpoint, saved = false, emptyMessage = 'Chư
     {modal?.type === 'delete' && <Modal title="Xóa bài viết?" onClose={close} busy={busyIds.includes(modal.post.id)}>
       <p>Bài viết, tệp đính kèm và các tương tác liên quan sẽ bị xóa. Thao tác này không thể hoàn tác.</p>
       {actionError && <p role="alert" className={styles.error}>{actionError}</p>}
-      <div className={styles.toolbar}><button disabled={busyIds.includes(modal.post.id)} onClick={close}>Hủy</button><button className={styles.danger} disabled={busyIds.includes(modal.post.id)} onClick={() => remove(modal.post)}>{busyIds.includes(modal.post.id) ? 'Đang xóa…' : 'Xác nhận xóa'}</button></div>
+
+      <div className={styles.toolbar}>
+        <button disabled={busyIds.includes(modal.post.id)} onClick={close}>Hủy</button>
+        <button className={styles.danger} disabled={busyIds.includes(modal.post.id)} 
+        onClick={() => remove(modal.post)}>{busyIds.includes(modal.post.id) ? 'Đang xóa…' : 'Xác nhận xóa'}
+        </button>
+        </div>
     </Modal>}
   </section>;
 }
