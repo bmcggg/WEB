@@ -13,7 +13,6 @@ export default function Feed() {
       <main className={styles.feedContainer}>
        
         <StoryBar currentUser={readUser()} />
-        <PostList endpoint="/posts" />
         <h1 className={styles.heading}>Bảng tin</h1>
         <p className={styles.subtitle}>Những chia sẻ mới từ cộng đồng Fella</p>
         <CreatePost onCreated={() => setRevision((current) => current + 1)} />

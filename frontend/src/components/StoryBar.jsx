@@ -1,4 +1,3 @@
-
 import { useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import { fetchAPI, assetUrl } from '../services/api';
 import styles from './Story.module.css';
@@ -252,6 +251,7 @@ export default function StoryBar({ currentUser }) {
                             fileInputRef.current?.click();
                     }}
                 >
+                <div className={ownGroup ? styles.storyRing : undefined}>
                     <div className={styles.addAvatar}>
                         {currentUser?.avatar ? (
                             <img
@@ -267,6 +267,7 @@ export default function StoryBar({ currentUser }) {
 
                         <span className={styles.plus}>+</span>
                     </div>
+                </div>
 
                     <span className={styles.storyName}>
                         Tin của bạn
@@ -299,8 +300,9 @@ export default function StoryBar({ currentUser }) {
                             {getName(group)}
                         </span>
                     </button>
+                
                 ))}
-
+                
                 {loading && (
                     <span className={styles.status}>
                         Đang tải Story...

@@ -191,3 +191,28 @@ CREATE TABLE saved_posts (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE NO ACTION
 );
+--Bảng 17: STORY_VIEWS
+--Bảng 18: STORY_VIEWS
+CREATE TABLE story_views (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+
+    story_id INT NOT NULL,
+    user_id INT NOT NULL,
+
+    viewed_at DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+    FOREIGN KEY (story_id) REFERENCES stories(id) ON DELETE NO ACTION,
+    FOREIGN KEY (user_id) REFERENCES users(id)  ON DELETE NO ACTION,
+    UNIQUE (story_id, user_id)
+);
+--Bảng 19: MESSAGE_VIEWS
+CREATE TABLE message_views (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+
+    message_id INT NOT NULL,
+    user_id INT NOT NULL,
+
+    viewed_at DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+    FOREIGN KEY (message_id) REFERENCES messages(id) ON DELETE NO ACTION,
+    FOREIGN KEY (user_id) REFERENCES users(id)  ON DELETE NO ACTION,
+    UNIQUE (message_id, user_id)
+);
