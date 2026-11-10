@@ -1,0 +1,394 @@
+.reactionWrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    min-height: 32px;
+}
+
+.likeArea {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+/* Nút Thích */
+.mainLikeBtn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: transparent;
+    border: none;
+    padding: 4px 8px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background 0.2s;
+    color: #65676b;
+}
+
+/* Icon Like lớn hơn */
+.likeIcon {
+    display: inline-block;
+    font-size: 18px;
+    line-height: 1;
+    filter: none;
+}
+
+.likeIconGray {
+    display: inline-block;
+    font-size: 18px;
+    line-height: 1;
+    filter: grayscale(1);
+}
+
+/* Chữ Thích nhỏ hơn */
+.btnText {
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.mainLikeBtn:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.mainLikeBtn.active {
+    color: #1877f2;
+}
+
+/* Popup chọn cảm xúc */
+.reactionPickerPopup {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    background: white;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+    border-radius: 30px;
+    padding: 6px 10px;
+    display: flex;
+    gap: 8px;
+    z-index: 100;
+    animation: fadeInPopup 0.2s ease-in-out;
+}
+
+@keyframes fadeInPopup {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.pickerIconBtn {
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    transition: transform 0.2s;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pickerIconBtn:hover {
+    transform: scale(1.3) translateY(-6px);
+}
+
+/* Thống kê reaction */
+.reactionSummary {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: auto;
+    padding: 4px 6px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    border-radius: 20px;
+    transition: background 0.15s ease;
+}
+
+.reactionSummary:hover {
+    background-color: #f0f2f5;
+}
+
+.summaryIcons {
+    display: inline-flex;
+    align-items: center;
+}
+
+.summaryEmoji {
+    font-size: 16px;
+    line-height: 1;
+    margin-left: -4px;
+    background: white;
+    border-radius: 50%;
+    position: relative;
+}
+
+.summaryEmoji:first-child {
+    margin-left: 0;
+}
+
+.summaryTotal {
+    font-size: 14px;
+    color: #65676b;
+    font-weight: 400;
+}
+
+.reactionError {
+    color: #e41e3f;
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+/* ================================
+   MODAL DANH SÁCH REACTION
+================================ */
+
+/* Lớp phủ toàn màn hình */
+.reactionModalOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background: rgba(0, 0, 0, 0.55);
+    animation: reactionFadeIn 0.2s ease;
+}
+
+/* Khung modal */
+.reactionModal {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 500px;
+    max-height: 80vh;
+    min-height: 250px;
+    overflow: hidden;
+    background: #ffffff;
+    border-radius: 14px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+    animation: reactionModalIn 0.2s ease;
+}
+
+/* Header */
+.reactionModalHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px 20px;
+    border-bottom: 1px solid #e4e6eb;
+}
+
+.reactionModalTitle {
+    color: #1c1e21;
+    font-size: 17px;
+    font-weight: 700;
+}
+
+/* Nút đóng */
+.reactionCloseBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    border: none;
+    border-radius: 50%;
+    background: #f0f2f5;
+    color: #606770;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.reactionCloseBtn:hover {
+    background: #e4e6eb;
+}
+
+/* Các tab reaction */
+.reactionTabs {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    overflow-x: auto;
+    border-bottom: 1px solid #e4e6eb;
+    scrollbar-width: thin;
+}
+
+.reactionTabs button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    flex-shrink: 0;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 20px;
+    background: transparent;
+    color: #65676b;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.2s, color 0.2s;
+}
+
+.reactionTabs button:hover {
+    background: #f0f2f5;
+}
+
+.reactionTabs button.activeTab {
+    background: #e7f3ff;
+    color: #1877f2;
+}
+
+/* Danh sách người reaction */
+.reactionUsersList {
+    flex: 1;
+    min-height: 0;
+    font-size: 18;
+    padding: 8px 12px;
+    overflow-y: auto;
+}
+
+/* Một người dùng */
+.reactionUserItem {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 8px;
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+
+.reactionUserItem:hover {
+    background: #f5f6f7;
+}
+
+/* Avatar và emoji */
+.avatarWrapper {
+    position: relative;
+    width: 46px;
+    height: 46px;
+    flex-shrink: 0;
+}
+
+.reactionAvatar {
+    display: block;
+    width: 46px;
+    height: 46px;
+    object-fit: cover;
+    border-radius: 50%;
+    background: #e4e6eb;
+}
+
+.avatarReaction {
+    position: absolute;
+    right: -3px;
+    bottom: -3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 21px;
+    height: 21px;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    background: #ffffff;
+    font-size: 14px;
+    line-height: 1;
+}
+
+/* Thông tin người dùng */
+.reactionUserInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+}
+
+.reactionUserName {
+    overflow: hidden;
+    color: #1c1e21;
+    font-size: 14px;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.reactionUsername {
+    color: #65676b;
+    font-size: 12px;
+}
+
+/* Loading, lỗi và danh sách trống */
+.reactionEmpty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 160px;
+    padding: 20px;
+    color: #65676b;
+    font-size: 14px;
+    text-align: center;
+}
+
+/* Hiệu ứng */
+@keyframes reactionFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes reactionModalIn {
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Điện thoại */
+@media (max-width: 480px) {
+    .reactionModalOverlay {
+        padding: 10px;
+    }
+
+    .reactionModal {
+        max-height: 85vh;
+        border-radius: 12px;
+    }
+
+    .reactionModalHeader {
+        padding: 14px;
+    }
+
+    .reactionModalTitle {
+        font-size: 15px;
+    }
+
+    .reactionTabs {
+        padding: 8px;
+    }
+
+    .reactionTabs button {
+        padding: 7px 10px;
+    }
+}

@@ -2,8 +2,8 @@ const express = require('express');
 const authenticate = require('../middlewares/authMiddleware');
 const controller = require('../controllers/postController');
 const { postUpload } = require('../utils/postUpload');
-
 const router = express.Router();
+
 router.use(authenticate);
 router.get('/', controller.getAllPosts);
 router.post('/', postUpload, controller.createPost);

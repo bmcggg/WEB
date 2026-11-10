@@ -12,6 +12,11 @@
     justify-content: flex-start;
     margin-bottom: 12px;
 }
+.commentsArea {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid #e5e7eb;
+}
 
 .avatarLink {
     text-decoration: none;
@@ -75,7 +80,7 @@
 
 .postInfo { min-width: 0; overflow-wrap: anywhere; }
 .avatar { flex-shrink: 0; }
-.actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; border-top: 1px solid #e4e6eb; padding-top: 12px; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; padding-top: 12px; }
 .actions button, .file button { background: #edf2f8; color: #1f4e83; border-radius: 6px; padding: 8px 12px; font-weight: 600; }
 .actions .danger { color: #b42332; }
 .mediaGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 8px; margin-top: 12px; }

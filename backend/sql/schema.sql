@@ -27,21 +27,30 @@ CREATE TABLE comments (
     id INT IDENTITY(1,1) PRIMARY KEY,
     post_id INT NOT NULL,
     user_id INT NOT NULL,
+     parent_comment_id INT NULL,
     content NVARCHAR(MAX) NOT NULL,
     created_at DATETIME2 DEFAULT GETDATE(),
     FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE NO ACTION
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE NO ACTION,
+    FOREIGN KEY (parent_comment_id) REFERENCES comments(id);
 );
 
 -- Bảng 4: REACTIONS
 CREATE TABLE reactions (
+    reaction_id INT PRIMARY KEY IDENTITY(1,1),
     user_id INT NOT NULL,
-    post_id INT NOT NULL,
+    post_id INT,
+    comment_id INT,
+    message_id INT, 
+    story_id INT,
     created_at DATETIME2 DEFAULT GETDATE(),
-    type NVARCHAR(20) CHECK(type IN ('LIKE','HEART','SAD','ANGRY','LAUGH')) DEFAULT 'LIKE',
-    PRIMARY KEY (user_id, post_id),
+    type NVARCHAR(20),
+    
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE NO ACTION
+    FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE NO ACTION,
+    FOREIGN KEY (comment_id) REFERENCES comments(id) ON DELETE NO ACTION,
+    FOREIGN KEY (message_id) REFERENCES messages(id) ON DELETE NO ACTION,
+    FOREIGN KEY (story_id) REFERENCES stories(id) ON DELETE NO ACTION,
 );
 
 -- Bảng 5: FOLLOWS
@@ -90,10 +99,12 @@ CREATE TABLE messages (
     id INT IDENTITY(1,1) PRIMARY KEY,
     sender_id INT NOT NULL,
     conversation_id INT NOT NULL,
+    parent_message_id INT NULL,
     content NVARCHAR(MAX),
     sent_at DATETIME2 DEFAULT GETDATE(),
     FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (conversation_id) REFERENCES conversations(id) ON DELETE CASCADE
+    FOREIGN KEY (conversation_id) REFERENCES conversations(id) ON DELETE CASCADE,
+    FOREIGN KEY (parent_message_id) REFERENCES messages(id);
 );
 
 -- Bảng 10: MESSAGE_READS
@@ -157,14 +168,19 @@ CREATE TABLE notifications (
 CREATE INDEX idx_notifications_receiver ON notifications(receiver_id);
 
 -- Bảng 15: STORIES
+-- Bảng 15: STORIES
 CREATE TABLE stories (
     id INT IDENTITY(1,1) PRIMARY KEY,
     user_id INT NOT NULL,
+    media_type NVARCHAR(20) NOT NULL DEFAULT 'IMAGE' CHECK (media_type IN ('IMAGE', 'VIDEO'),
     media_url NVARCHAR(MAX) NOT NULL,
     expires_at DATETIME2 NOT NULL,
-    created_at DATETIME2 DEFAULT GETDATE(),
+    created_at DATETIME2 NOT NULL DEFAULT GETDATE(),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
+
+-- Index phục vụ truy vấn danh sách Story chưa hết hạn
+CREATE INDEX IX_stories_expires_at_user_id ON stories (expires_at, user_id) INCLUDE (media_type, created_at);
 
 -- Bảng 16: SAVED_POSTS
 CREATE TABLE saved_posts (
@@ -174,4 +190,29 @@ CREATE TABLE saved_posts (
     PRIMARY KEY (user_id, post_id),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE NO ACTION
+);
+--Bảng 17: STORY_VIEWS
+--Bảng 18: STORY_VIEWS
+CREATE TABLE story_views (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+
+    story_id INT NOT NULL,
+    user_id INT NOT NULL,
+
+    viewed_at DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+    FOREIGN KEY (story_id) REFERENCES stories(id) ON DELETE NO ACTION,
+    FOREIGN KEY (user_id) REFERENCES users(id)  ON DELETE NO ACTION,
+    UNIQUE (story_id, user_id)
+);
+--Bảng 19: MESSAGE_VIEWS
+CREATE TABLE message_views (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+
+    message_id INT NOT NULL,
+    user_id INT NOT NULL,
+
+    viewed_at DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+    FOREIGN KEY (message_id) REFERENCES messages(id) ON DELETE NO ACTION,
+    FOREIGN KEY (user_id) REFERENCES users(id)  ON DELETE NO ACTION,
+    UNIQUE (message_id, user_id)
 );

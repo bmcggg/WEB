@@ -15,8 +15,25 @@ for (const publicRoot of [path.resolve(__dirname, '../public'), path.resolve(__d
 }
 
 function filePath(key) {
-    if (/^posts\/[a-f0-9-]+\.(jpg|png|webp|pdf)$/.test(key)) return path.join(storageRoot, key);
-    if (/^\/uploads\/[a-zA-Z0-9_-]+\.[a-zA-Z0-9]+$/.test(key)) return path.join(avatarDirectory, path.basename(key));
+    const allowedExtensions =
+        'jpg|png|webp|gif|pdf|mp4|webm|mov|mp3|wav|ogg|m4a|doc|docx|xls|xlsx|ppt|pptx|txt|csv|zip';
+
+    const pattern = new RegExp(
+        `^posts/[a-f0-9-]+\\.(${allowedExtensions})$`,
+        'i'
+    );
+
+    if (typeof key === 'string' && pattern.test(key)) {
+        return path.join(storageRoot, key);
+    }
+
+    if (
+        typeof key === 'string' &&
+        /^\/uploads\/[a-zA-Z0-9_-]+\.[a-zA-Z0-9]+$/.test(key)
+    ) {
+        return path.join(avatarDirectory, path.basename(key));
+    }
+
     return null;
 }
 

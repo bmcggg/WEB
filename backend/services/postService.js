@@ -120,7 +120,7 @@ class PostService {
         });
     }
 
-    async deletePost(postId, viewer) {
+     deletePost(postId, viewer) {
         return transaction(async (unit) => {
             requireOwner(await lockPost(unit, postId), viewer);
             const result = await new sql.Request(unit).input('id', sql.Int, postId).query(`
@@ -129,10 +129,12 @@ class PostService {
                 DELETE FROM notifications WHERE post_id = @id OR comment_id IN (SELECT id FROM comments WHERE post_id = @id);
                 DELETE FROM saved_posts WHERE post_id = @id;
                 DELETE FROM reactions WHERE post_id = @id;
+                DELETE FROM reactions WHERE post_id = @id OR comment_id IN (SELECT id FROM comments WHERE post_id = @id);
                 DELETE FROM posts WHERE id = @id;
+
             `);
             return result.recordset.map((item) => item.media_url);
-        });
+        });async
     }
 
     async savePost(postId, viewer) {
