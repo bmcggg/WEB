@@ -6,6 +6,9 @@ const multer = require('multer');
 const { HttpError } = require('./utils/postValidation');
 const authRoutes = require('./routes/auth');
 const postRoutes = require('./routes/posts');
+const commentRoutes = require('./routes/comments');
+const reactionRoutes = require('./routes/reactions');
+const storyRoutes = require('./routes/stories');
 
 function createApp() {
     const app = express();
@@ -13,9 +16,14 @@ function createApp() {
     app.use(cors({ origin: process.env.CLIENT_ORIGIN || 'http://localhost:5173' }));
     app.use(express.json({ limit: '100kb' }));
     app.use(express.urlencoded({ extended: false, limit: '100kb' }));
+
     app.use('/api/auth', authRoutes);
     app.use('/api/posts', postRoutes);
+    app.use('/api/comments', commentRoutes);
+    app.use('/api/reactions', reactionRoutes);
+    app.use('/api/stories', storyRoutes);
     app.use('/api', (req, res) => res.status(404).json({ error: 'Khong tim thay API.' }));
+
     app.use('/uploads', express.static(path.join(__dirname, 'public/uploads'), { dotfiles: 'deny' }));
     const frontend = path.join(__dirname, '../frontend/dist');
     if (fs.existsSync(path.join(frontend, 'index.html'))) {
@@ -26,7 +34,7 @@ function createApp() {
         if (res.headersSent) return next(error);
         if (error instanceof multer.MulterError) {
             const status = error.code === 'LIMIT_FILE_SIZE' ? 413 : 400;
-            return res.status(status).json({ error: error.code === 'LIMIT_FILE_SIZE' ? 'Moi tep toi da 10 MB.' : 'Toi da 5 tep, truong upload phai la media.' });
+            return res.status(status).json({ error: error.code === 'LIMIT_FILE_SIZE' ? 'Moi tep toi da 50 MB.' : 'Toi da 5 tep, truong upload phai la media.' });
         }
         if (error instanceof HttpError) return res.status(error.status).json({ error: error.message });
         if (error.type === 'entity.parse.failed') return res.status(400).json({ error: 'JSON khong hop le.' });

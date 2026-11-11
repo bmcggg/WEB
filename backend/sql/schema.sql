@@ -32,7 +32,7 @@ CREATE TABLE comments (
     created_at DATETIME2 DEFAULT GETDATE(),
     FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE NO ACTION,
-    FOREIGN KEY (parent_comment_id) REFERENCES comments(id);
+    FOREIGN KEY (parent_comment_id) REFERENCES comments(id)
 );
 
 -- Bảng 4: REACTIONS
@@ -172,7 +172,7 @@ CREATE INDEX idx_notifications_receiver ON notifications(receiver_id);
 CREATE TABLE stories (
     id INT IDENTITY(1,1) PRIMARY KEY,
     user_id INT NOT NULL,
-    media_type NVARCHAR(20) NOT NULL DEFAULT 'IMAGE' CHECK (media_type IN ('IMAGE', 'VIDEO'),
+    media_type NVARCHAR(20) NOT NULL DEFAULT 'IMAGE' CHECK (media_type IN ('IMAGE', 'VIDEO')),
     media_url NVARCHAR(MAX) NOT NULL,
     expires_at DATETIME2 NOT NULL,
     created_at DATETIME2 NOT NULL DEFAULT GETDATE(),
