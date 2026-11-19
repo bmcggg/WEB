@@ -1,53 +1,74 @@
-const API_BASE_URL = (import.meta.env?.VITE_API_BASE_URL || '/api').replace(/\/$/, '');
+import axios from 'axios';
+import { API_BASE_URL, SESSION_EXPIRED_EVENT } from './config';
+import { session } from './storage';
 
-export function readUser() {
-  try { return JSON.parse(localStorage.getItem('fella_user') || 'null'); }
-  catch { return null; }
-}
+export const readUser = session.getUser;
 
 export function assetUrl(value) {
   if (!value) return '';
-  const base = new URL(API_BASE_URL, window.location.origin);
-  const url = new URL(value, base.origin);
-  return ['http:', 'https:'].includes(url.protocol) ? url.href : '';
-}
-
-function requestUrl(endpoint) {
-  const base = new URL(API_BASE_URL + '/', window.location.origin);
-  const relative = endpoint.startsWith('/api/') ? endpoint.slice(5) : endpoint.replace(/^\//, '');
-  const target = new URL(relative, base);
-  if (target.origin !== base.origin || !target.pathname.startsWith(base.pathname)) throw new Error('URL API không hợp lệ.');
-  return target.href;
-}
-
-export async function fetchAPI(endpoint, options = {}) {
-  const { responseType = 'json', ...requestOptions } = options;
-  const token = localStorage.getItem('fella_token');
-  const headers = new Headers(requestOptions.headers);
-  if (requestOptions.body instanceof FormData) headers.delete('Content-Type');
-  else if (requestOptions.body && !headers.has('Content-Type')) headers.set('Content-Type', 'application/json');
-  if (token) headers.set('Authorization', 'Bearer ' + token);
-  let response;
   try {
-    response = await fetch(requestUrl(endpoint), { ...requestOptions, headers, cache: 'no-store' });
-  } catch (error) {
-    if (error.name === 'AbortError') throw error;
-    throw new Error('Không kết nối được máy chủ. Vui lòng thử lại.', { cause: error });
+    const base = new URL(API_BASE_URL, window.location.origin);
+    const url = new URL(value, base.origin);
+    return ['http:', 'https:'].includes(url.protocol) ? url.href : '';
+  } catch {
+    return '';
   }
-  if (!response.ok) {
-    const data = response.headers.get('content-type')?.includes('application/json')
-      ? await response.json().catch(() => null) : null;
-    if (response.status === 401 && token) {
-      localStorage.removeItem('fella_token');
-      localStorage.removeItem('fella_user');
-      window.dispatchEvent(new Event('fella:session-expired'));
-    }
-    const error = new Error(data?.error || 'Yêu cầu thất bại (' + response.status + ').');
-    error.status = response.status;
-    throw error;
-  }
-  if (response.status === 204) return null;
-  if (responseType === 'blob') return response.blob();
-  if (!response.headers.get('content-type')?.includes('application/json')) throw new Error('Máy chủ trả dữ liệu không hợp lệ.');
-  return response.json();
 }
+
+export class ApiError extends Error {
+  constructor(message, { status, cause } = {}) {
+    super(message, { cause });
+    this.name = 'ApiError';
+    this.status = status;
+  }
+}
+
+const http = axios.create({ baseURL: API_BASE_URL });
+
+// 1 interceptor request duy nhất: kiểm tra URL -> rồi mới gắn token
+http.interceptors.request.use((config) => {
+  const base = new URL(API_BASE_URL + '/', window.location.origin);
+  const target = new URL(axios.getUri(config), window.location.origin);
+  if (target.origin !== base.origin || !target.pathname.startsWith(base.pathname)) {
+    throw new ApiError('URL API không hợp lệ.');
+  }
+  const token = session.getToken();
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  config._hadToken = Boolean(token);
+  return config;
+});
+
+http.interceptors.response.use(
+  (res) => {
+    const type = res.headers['content-type'] || '';
+    if (res.config.responseType === 'json' && res.status !== 204 && !type.includes('application/json')) {
+      throw new ApiError('Máy chủ trả dữ liệu không hợp lệ.');
+    }
+    return res;
+  },
+  (error) => {
+    if (axios.isCancel(error)) return Promise.reject(error);
+    if (error instanceof ApiError) return Promise.reject(error);
+    if (!error.response) {
+      return Promise.reject(new ApiError('Không kết nối được máy chủ. Vui lòng thử lại.', { cause: error }));
+    }
+    const { status, data, config } = error.response;
+    if (status === 401 && config._hadToken) {
+      session.clear();
+      window.dispatchEvent(new Event(SESSION_EXPIRED_EVENT));
+    }
+    const message = (data && typeof data === 'object' && data.error) || `Yêu cầu thất bại (${status}).`;
+    return Promise.reject(new ApiError(message, { status, cause: error }));
+  }
+);
+
+const unwrap = (p) => p.then((res) => (res.status === 204 ? null : res.data));
+
+export const api = {
+  get: (url, cfg) => unwrap(http.get(url, cfg)),
+  post: (url, body, cfg) => unwrap(http.post(url, body, cfg)),
+  put: (url, body, cfg) => unwrap(http.put(url, body, cfg)),
+  patch: (url, body, cfg) => unwrap(http.patch(url, body, cfg)),
+  delete: (url, cfg) => unwrap(http.delete(url, cfg)),
+  blob: (url, cfg) => unwrap(http.get(url, { ...cfg, responseType: 'blob' })),
+};
