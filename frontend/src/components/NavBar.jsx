@@ -20,6 +20,8 @@ export default function Navbar({ compact = false }) {
 
       <div className={styles.userInfo}>
         <Link to="/saved" className={styles.userProfileLink}>Đã lưu</Link>
+        <Link to="/chat" className={styles.chatLink}>Trò chuyện</Link>
+        <Link to="/notifications" className={styles.Notifications}>Thông báo</Link>
         {!compact && (
           <Link to="/profile" className={styles.userProfileLink}>
             <div

@@ -64,6 +64,35 @@ http.interceptors.response.use(
 
 const unwrap = (p) => p.then((res) => (res.status === 204 ? null : res.data));
 
+// Giữ tương thích với các component đang gọi fetchAPI(url, { method, body, ... }).
+export async function fetchAPI(url, { method = 'GET', body, ...config } = {}) {
+  let data = body;
+
+  // Axios nhận object để tự mã hóa JSON và đặt Content-Type phù hợp.
+  if (typeof body === 'string') {
+    try {
+      data = JSON.parse(body);
+    } catch {
+      // Giữ nguyên body nếu đó không phải JSON.
+    }
+  }
+
+  try {
+    const response = await http.request({
+      url,
+      method,
+      data,
+      ...config,
+    });
+    return response.status === 204 ? null : response.data;
+  } catch (error) {
+    if (axios.isCancel(error)) {
+      throw new DOMException('The operation was aborted.', 'AbortError');
+    }
+    throw error;
+  }
+}
+
 export const api = {
   get: (url, cfg) => unwrap(http.get(url, cfg)),
   post: (url, body, cfg) => unwrap(http.post(url, body, cfg)),

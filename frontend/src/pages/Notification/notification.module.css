@@ -1,0 +1,189 @@
+.page {
+  min-height: calc(100vh - 56px);
+  background: #f0f2f5;
+  padding: 20px 12px;
+}
+
+.container {
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.header {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  padding: 16px 20px;
+  margin-bottom: 12px;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #050505;
+  margin-bottom: 2px;
+}
+
+.subtitle {
+  color: #65676b;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.filterBtn,
+.markAllBtn {
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 14px;
+  background: #e4e6eb;
+  color: #050505;
+}
+
+.filterBtn:hover,
+.markAllBtn:hover {
+  background: #d8dadf;
+}
+
+.filterBtnActive {
+  background: #e7f3ff;
+  color: #1877f2;
+}
+
+.filterBtnActive:hover {
+  background: #dbe7f2;
+}
+
+.markAllBtn {
+  margin-left: auto;
+}
+
+.markAllBtn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.list {
+  list-style: none;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.item {
+  border-bottom: 1px solid #e4e6eb;
+}
+
+.item:last-child {
+  border-bottom: none;
+}
+
+.itemUnread {
+  background: #e7f3ff;
+}
+
+.itemLink,
+.itemButton {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 12px 16px;
+  background: transparent;
+  color: inherit;
+}
+
+.itemLink:hover,
+.itemButton:hover {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.itemUnread .itemLink:hover,
+.itemUnread .itemButton:hover {
+  background: #dbefff;
+}
+
+.itemInner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #1877f2;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
+}
+
+.text {
+  color: #050505;
+  font-size: 14px;
+  line-height: 1.4;
+  margin-bottom: 2px;
+}
+
+.time {
+  color: #1877f2;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.item:not(.itemUnread) .time {
+  color: #65676b;
+  font-weight: 400;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #1877f2;
+  flex-shrink: 0;
+}
+
+.emptyState {
+  padding: 32px 16px;
+  text-align: center;
+  color: #65676b;
+  font-size: 15px;
+}
+
+@media (max-width: 480px) {
+  .header {
+    padding: 14px;
+  }
+
+  .markAllBtn {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filterBtn {
+    flex: 1;
+  }
+}
