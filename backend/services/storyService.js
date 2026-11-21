@@ -167,11 +167,57 @@ async function deleteStory(storyId, userId) {
 
 async function deleteExpiredStories() {
     const pool = await sql.connect();
+    const transaction = new sql.Transaction(pool);
 
-    const result = await pool.request().query(` DELETE FROM stories
-        OUTPUT DELETED.media_url WHERE expires_at <= SYSDATETIME();`);
+    await transaction.begin();
 
-    return result.recordset.map(item => item.media_url);
+    try {
+        // Lấy danh sách Story hết hạn
+        const expiredResult = await new sql.Request(transaction)
+            .query(`
+                SELECT id, media_url
+                FROM stories
+                WHERE expires_at <= SYSDATETIME();
+            `);
+
+        const expiredStories = expiredResult.recordset;
+
+        if (expiredStories.length === 0) {
+            await transaction.commit();
+            return [];
+        }
+
+        // Xóa reaction của các Story hết hạn
+        await new sql.Request(transaction)
+            .query(`
+                DELETE FROM reactions
+                WHERE story_id IN (
+                    SELECT id
+                    FROM stories
+                    WHERE expires_at <= SYSDATETIME()
+                );
+            `);
+
+        // Xóa Story hết hạn
+        await new sql.Request(transaction)
+            .query(`
+                DELETE FROM stories
+                WHERE expires_at <= SYSDATETIME();
+            `);
+
+        await transaction.commit();
+
+        return expiredStories.map(item => item.media_url);
+
+    } catch (error) {
+        try {
+            await transaction.rollback();
+        } catch (rollbackError) {
+            console.error('Lỗi rollback Story cleanup:', rollbackError);
+        }
+
+        throw error;
+    }
 }
 
 module.exports = {

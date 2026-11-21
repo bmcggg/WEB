@@ -27,11 +27,7 @@ async function cleanupExpiredStories() {
         // Xóa file vật lý
         const cleanupPending = await removeFiles(removableFiles);
 
-        console.log(
-            `Story cleanup: ${expiredFiles.length} Story hết hạn, ` +
-            `${removableFiles.length} file được kiểm tra, ` +
-            `cleanupPending=${cleanupPending}`
-        );
+        
 
     } catch (error) {
         console.error(

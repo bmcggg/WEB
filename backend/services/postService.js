@@ -10,7 +10,7 @@ function attachMedia(posts, media) {
     const grouped = new Map();
     for (const item of media) {
         const values = grouped.get(item.post_id) || [];
-        values.push({ id: item.id, media_type: item.media_type, media_url: `/api/posts/${item.post_id}/media/${item.id}`, display_order: item.display_order });
+        values.push({ id: item.id, media_type: item.media_type, media_url: `/posts/${item.post_id}/media/${item.id}`, display_order: item.display_order });
         grouped.set(item.post_id, values);
     }
     return posts.map((post) => ({ ...post, is_saved: Boolean(post.is_saved), media: grouped.get(post.id) || [] }));
