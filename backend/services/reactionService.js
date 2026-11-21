@@ -1,5 +1,12 @@
 const { sql } = require('../config/database');
+const notificationService = require('./notificationService');
 const VALID_TYPES = ['LIKE',  'HEART','LAUGH', 'WOW', 'SAD', 'ANGRY'];
+const OWNER_COLUMNS = {
+    post: 'user_id',
+    comment: 'user_id',
+    story: 'user_id',
+    message: 'sender_id'
+};
 
 function getTargetInfo(targetType) {
     const targets = {
@@ -15,6 +22,27 @@ function createError(statusCode, message) {
     const error = new Error(message);
     error.statusCode = statusCode;
     return error;
+}
+
+function notificationContext(targetType, targetId) {
+    return {
+        postId: targetType === 'post' ? targetId : null,
+        commentId: targetType === 'comment' ? targetId : null,
+        messageId: targetType === 'message' ? targetId : null
+    };
+}
+
+async function getOwnerId(pool, targetType, targetId) {
+    const target = getTargetInfo(targetType);
+    const column = OWNER_COLUMNS[targetType];
+
+    if (!target || !column) return null;
+
+    const result = await pool.request()
+        .input('targetId', sql.Int, targetId)
+        .query(`SELECT TOP 1 ${column} AS owner_id FROM ${target.table} WHERE id = @targetId;`);
+
+    return result.recordset[0]?.owner_id ?? null;
 }
 
 async function checkTargetExists(pool, targetType, targetId) {
@@ -111,6 +139,9 @@ async function toggleReaction({ userId, targetType, targetId, type}) {
 
     await checkTargetExists(pool, targetType, targetId);
 
+    const receiverId = await getOwnerId(pool, targetType, targetId);
+    const context = notificationContext(targetType, targetId);
+
     const existingResult = await pool.request()
         .input('targetId', sql.Int, targetId)
         .input('userId', sql.Int, userId)
@@ -123,6 +154,13 @@ async function toggleReaction({ userId, targetType, targetId, type}) {
             .input('reactionId', sql.Int, existing.reaction_id)
             .query(` DELETE FROM reactions WHERE reaction_id = @reactionId`);
 
+        await notificationService.removeNotification({
+            type: 'REACTED',
+            senderId: userId,
+            receiverId,
+            ...context
+        });
+
         return { userReaction: null,  message: 'Đã gỡ reaction.' };
     }
 
@@ -131,7 +169,14 @@ async function toggleReaction({ userId, targetType, targetId, type}) {
         await pool.request()
             .input('reactionId', sql.Int, existing.reaction_id)
             .input('type', sql.NVarChar(20), type)
-            .query(` UPDATE reactionsSET type = @type,  created_at = GETDATE() WHERE reaction_id = @reactionId`);
+            .query(` UPDATE reactions SET type = @type, created_at = GETDATE() WHERE reaction_id = @reactionId`);
+
+        await notificationService.addNotification({
+            type: 'REACTED',
+            senderId: userId,
+            receiverId,
+            ...context
+        });
 
         return { userReaction: type, message: 'Đã cập nhật reaction.'};
     }
@@ -149,10 +194,17 @@ async function toggleReaction({ userId, targetType, targetId, type}) {
 
     insertRequest.input('postId', sql.Int, targetType === 'post' ? targetId : null)
                 .input('commentId', sql.Int, targetType === 'comment' ? targetId : null)
-                .input('messageId', sql.Int, null)
+                .input('messageId', sql.Int, targetType === 'message' ? targetId : null)
                 .input('storyId', sql.Int, targetType === 'story' ? targetId : null);
 
     await insertRequest.query(insertQuery);
+
+    await notificationService.addNotification({
+        type: 'REACTED',
+        senderId: userId,
+        receiverId,
+        ...context
+    });
 
     return { userReaction: type, message: 'Đã cập nhật reaction.'};
 }

@@ -54,17 +54,18 @@ async function getReactionUsers(req, res) {
 
 async function toggleReaction(req, res) {
     try {
-        const { user_id, post_id, comment_id, story_id, type} = req.body;
+        const { user_id, post_id, comment_id, story_id, message_id, type} = req.body;
 
         const targets = [
             { type: 'post', value: post_id },
             { type: 'comment', value: comment_id },
-            { type: 'story', value: story_id }
+            { type: 'story', value: story_id },
+            { type: 'message', value: message_id }
         ].filter(item => item.value !== undefined && item.value !== null);
 
         if (targets.length !== 1)
             return res.status(400).json({
-                success: false, message: 'Chỉ được cung cấp một trong post_id, comment_id hoặc story_id.'
+                success: false, message: 'Chỉ được cung cấp một đối tượng reaction.'
             });
         
         const userId = validateId(user_id, 'User ID');

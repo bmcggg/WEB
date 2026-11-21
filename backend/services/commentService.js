@@ -1,6 +1,7 @@
 const fs = require('node:fs/promises');
 const { sql } = require('../config/database');
 const { HttpError, positiveInteger } = require('../utils/postValidation');
+const notificationService = require('./notificationService');
 const visible = "(p.privacy = 'PUBLIC' OR p.user_id = @viewer)";
 
 function mediaUrl(commentId, mediaId) {
@@ -111,7 +112,7 @@ class CommentService {
             const postResult = await new sql.Request(transaction)
                 .input('postId', sql.Int, postId)
                 .input('viewer', sql.Int, userId)
-                .query(`  SELECT id  FROM posts p
+                .query(`  SELECT p.id, p.user_id FROM posts p
                     WHERE p.id = @postId AND ${visible}`);
 
             if (!postResult.recordset.length) 
@@ -130,6 +131,15 @@ class CommentService {
                     VALUES ( @postId,  @userId, @parentCommentId, @content);`);
 
             const commentId = commentResult.recordset[0].id;
+
+            await notificationService.addNotification({
+                type: 'COMMENTED',
+                senderId: userId,
+                receiverId: postResult.recordset[0]?.user_id,
+                postId,
+                commentId,
+                unit: transaction,
+            });
 
         
            for (const item of media) {
@@ -205,6 +215,10 @@ class CommentService {
             await new sql.Request(transaction)
                 .input('commentId', sql.Int, id)
                 .query(`DELETE FROM reactions WHERE comment_id = @commentId;`);
+
+            await new sql.Request(transaction)
+                .input('commentId', sql.Int, id)
+                .query(`DELETE FROM notifications WHERE comment_id = @commentId;`);
 
             
             await new sql.Request(transaction)

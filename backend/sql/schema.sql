@@ -22,57 +22,15 @@ CREATE TABLE posts (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- Bảng 3: COMMENTS
-CREATE TABLE comments (
+-- Bảng 15: STORIES (tạo trước reactions vì reactions có khóa ngoại tới stories)
+CREATE TABLE stories (
     id INT IDENTITY(1,1) PRIMARY KEY,
-    post_id INT NOT NULL,
     user_id INT NOT NULL,
-     parent_comment_id INT NULL,
-    content NVARCHAR(MAX) NOT NULL,
-    created_at DATETIME2 DEFAULT GETDATE(),
-    FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE NO ACTION,
-    FOREIGN KEY (parent_comment_id) REFERENCES comments(id)
-);
-
--- Bảng 4: REACTIONS
-CREATE TABLE reactions (
-    reaction_id INT PRIMARY KEY IDENTITY(1,1),
-    user_id INT NOT NULL,
-    post_id INT,
-    comment_id INT,
-    message_id INT, 
-    story_id INT,
-    created_at DATETIME2 DEFAULT GETDATE(),
-    type NVARCHAR(20),
-    
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE NO ACTION,
-    FOREIGN KEY (comment_id) REFERENCES comments(id) ON DELETE NO ACTION,
-    FOREIGN KEY (message_id) REFERENCES messages(id) ON DELETE NO ACTION,
-    FOREIGN KEY (story_id) REFERENCES stories(id) ON DELETE NO ACTION,
-);
-
--- Bảng 5: FOLLOWS
-CREATE TABLE follows (
-    follower_id INT NOT NULL,
-    following_id INT NOT NULL,
-    created_at DATETIME2 DEFAULT GETDATE(),
-    PRIMARY KEY (follower_id, following_id),
-    CHECK (follower_id <> following_id),
-    FOREIGN KEY (follower_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (following_id) REFERENCES users(id) ON DELETE NO ACTION
-);
-
--- Bảng 6: SHARES
-CREATE TABLE shares (
-    id INT IDENTITY(1,1) PRIMARY KEY,
-    post_id INT NOT NULL,
-    user_id INT NOT NULL,
-    caption NVARCHAR(MAX),
-    created_at DATETIME2 DEFAULT GETDATE(),
-    FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE NO ACTION
+    media_type NVARCHAR(20) NOT NULL DEFAULT 'IMAGE' CHECK (media_type IN ('IMAGE', 'VIDEO')),
+    media_url NVARCHAR(MAX) NOT NULL,
+    expires_at DATETIME2 NOT NULL,
+    created_at DATETIME2 NOT NULL DEFAULT GETDATE(),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 -- Bảng 7: CONVERSATIONS
@@ -104,7 +62,7 @@ CREATE TABLE messages (
     sent_at DATETIME2 DEFAULT GETDATE(),
     FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (conversation_id) REFERENCES conversations(id) ON DELETE CASCADE,
-    FOREIGN KEY (parent_message_id) REFERENCES messages(id);
+    FOREIGN KEY (parent_message_id) REFERENCES messages(id)
 );
 
 -- Bảng 10: MESSAGE_READS
@@ -127,14 +85,17 @@ CREATE TABLE message_media (
     FOREIGN KEY (message_id) REFERENCES messages(id) ON DELETE CASCADE
 );
 
--- Bảng 12: POST_MEDIA
-CREATE TABLE post_media (
+-- Bảng 3: COMMENTS
+CREATE TABLE comments (
     id INT IDENTITY(1,1) PRIMARY KEY,
     post_id INT NOT NULL,
-    media_url NVARCHAR(MAX) NOT NULL,
-    media_type NVARCHAR(20) NOT NULL CHECK(media_type IN ('IMAGE', 'VIDEO', 'AUDIO','FILE')),
-    display_order INT DEFAULT 0,
-    FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE
+    user_id INT NOT NULL,
+    parent_comment_id INT NULL,
+    content NVARCHAR(MAX) NOT NULL,
+    created_at DATETIME2 DEFAULT GETDATE(),
+    FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE NO ACTION,
+    FOREIGN KEY (parent_comment_id) REFERENCES comments(id)
 );
 
 -- Bảng 13: COMMENT_MEDIA
@@ -145,6 +106,55 @@ CREATE TABLE comment_media (
     media_type NVARCHAR(20) NOT NULL CHECK(media_type IN ('IMAGE', 'VIDEO', 'AUDIO','FILE')),
     display_order INT DEFAULT 0,
     FOREIGN KEY (comment_id) REFERENCES comments(id) ON DELETE CASCADE
+);
+
+-- Bảng 12: POST_MEDIA
+CREATE TABLE post_media (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    post_id INT NOT NULL,
+    media_url NVARCHAR(MAX) NOT NULL,
+    media_type NVARCHAR(20) NOT NULL CHECK(media_type IN ('IMAGE', 'VIDEO', 'AUDIO','FILE')),
+    display_order INT DEFAULT 0,
+    FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE
+);
+
+-- Bảng 4: REACTIONS (đặt sau posts/comments/messages/stories để khóa ngoại hợp lệ)
+CREATE TABLE reactions (
+    reaction_id INT PRIMARY KEY IDENTITY(1,1),
+    user_id INT NOT NULL,
+    post_id INT,
+    comment_id INT,
+    message_id INT,
+    story_id INT,
+    created_at DATETIME2 DEFAULT GETDATE(),
+    type NVARCHAR(20),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE NO ACTION,
+    FOREIGN KEY (comment_id) REFERENCES comments(id) ON DELETE NO ACTION,
+    FOREIGN KEY (message_id) REFERENCES messages(id) ON DELETE NO ACTION,
+    FOREIGN KEY (story_id) REFERENCES stories(id) ON DELETE NO ACTION
+);
+
+-- Bảng 5: FOLLOWS
+CREATE TABLE follows (
+    follower_id INT NOT NULL,
+    following_id INT NOT NULL,
+    created_at DATETIME2 DEFAULT GETDATE(),
+    PRIMARY KEY (follower_id, following_id),
+    CHECK (follower_id <> following_id),
+    FOREIGN KEY (follower_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (following_id) REFERENCES users(id) ON DELETE NO ACTION
+);
+
+-- Bảng 6: SHARES
+CREATE TABLE shares (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    post_id INT NOT NULL,
+    user_id INT NOT NULL,
+    caption NVARCHAR(MAX),
+    created_at DATETIME2 DEFAULT GETDATE(),
+    FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE NO ACTION
 );
 
 -- Bảng 14: NOTIFICATIONS
@@ -167,21 +177,6 @@ CREATE TABLE notifications (
 
 CREATE INDEX idx_notifications_receiver ON notifications(receiver_id);
 
--- Bảng 15: STORIES
--- Bảng 15: STORIES
-CREATE TABLE stories (
-    id INT IDENTITY(1,1) PRIMARY KEY,
-    user_id INT NOT NULL,
-    media_type NVARCHAR(20) NOT NULL DEFAULT 'IMAGE' CHECK (media_type IN ('IMAGE', 'VIDEO')),
-    media_url NVARCHAR(MAX) NOT NULL,
-    expires_at DATETIME2 NOT NULL,
-    created_at DATETIME2 NOT NULL DEFAULT GETDATE(),
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-);
-
--- Index phục vụ truy vấn danh sách Story chưa hết hạn
-CREATE INDEX IX_stories_expires_at_user_id ON stories (expires_at, user_id) INCLUDE (media_type, created_at);
-
 -- Bảng 16: SAVED_POSTS
 CREATE TABLE saved_posts (
     user_id INT NOT NULL,
@@ -191,28 +186,28 @@ CREATE TABLE saved_posts (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE NO ACTION
 );
---Bảng 17: STORY_VIEWS
---Bảng 18: STORY_VIEWS
+
+-- Index phục vụ truy vấn danh sách Story chưa hết hạn
+CREATE INDEX IX_stories_expires_at_user_id ON stories (expires_at, user_id) INCLUDE (media_type, created_at);
+
+-- Bảng 17: STORY_VIEWS
 CREATE TABLE story_views (
     id INT IDENTITY(1,1) PRIMARY KEY,
-
     story_id INT NOT NULL,
     user_id INT NOT NULL,
-
     viewed_at DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
     FOREIGN KEY (story_id) REFERENCES stories(id) ON DELETE NO ACTION,
-    FOREIGN KEY (user_id) REFERENCES users(id)  ON DELETE NO ACTION,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE NO ACTION,
     UNIQUE (story_id, user_id)
 );
---Bảng 19: MESSAGE_VIEWS
+
+-- Bảng 18: MESSAGE_VIEWS
 CREATE TABLE message_views (
     id INT IDENTITY(1,1) PRIMARY KEY,
-
     message_id INT NOT NULL,
     user_id INT NOT NULL,
-
     viewed_at DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
     FOREIGN KEY (message_id) REFERENCES messages(id) ON DELETE NO ACTION,
-    FOREIGN KEY (user_id) REFERENCES users(id)  ON DELETE NO ACTION,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE NO ACTION,
     UNIQUE (message_id, user_id)
 );

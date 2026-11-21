@@ -70,6 +70,15 @@
   cursor: default;
 }
 
+.errorBanner {
+  margin-top: 10px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: #ffe3e3;
+  color: #c62828;
+  font-size: 13px;
+}
+
 .list {
   list-style: none;
   background: #fff;

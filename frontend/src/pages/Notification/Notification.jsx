@@ -1,61 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../../components/NavBar";
+import {
+  getNotifications,
+  markAllNotificationsRead,
+  markNotificationRead,
+} from "../../services/notificationApi";
 import styles from "./notification.module.css";
-
-// Mock data shaped to match DB table: notifications (+ joined sender info).
-// type: REACTED | COMMENTED | FOLLOWED | MESSAGED
-// Replace loaders/actions with fetchAPI calls when backend is ready.
-const MOCK_NOTIFICATIONS = [
-  {
-    id: 1,
-    type: "REACTED",
-    sender_id: 2,
-    receiver_id: 1,
-    post_id: 101,
-    comment_id: null,
-    message_id: null,
-    is_read: 0,
-    created_at: "2026-11-19T03:30:00Z",
-    sender: { id: 2, username: "minhanh", full_name: "Nguyễn Minh Anh", avatar: null },
-  },
-  {
-    id: 2,
-    type: "COMMENTED",
-    sender_id: 3,
-    receiver_id: 1,
-    post_id: 101,
-    comment_id: 55,
-    message_id: null,
-    is_read: 0,
-    created_at: "2026-11-19T02:10:00Z",
-    sender: { id: 3, username: "quocbao", full_name: "Trần Quốc Bảo", avatar: null },
-  },
-  {
-    id: 3,
-    type: "FOLLOWED",
-    sender_id: 4,
-    receiver_id: 1,
-    post_id: null,
-    comment_id: null,
-    message_id: null,
-    is_read: 1,
-    created_at: "2026-11-18T14:05:00Z",
-    sender: { id: 4, username: "thuha", full_name: "Lê Thu Hà", avatar: null },
-  },
-  {
-    id: 4,
-    type: "MESSAGED",
-    sender_id: 5,
-    receiver_id: 1,
-    post_id: null,
-    comment_id: null,
-    message_id: 403,
-    is_read: 1,
-    created_at: "2026-11-18T09:20:00Z",
-    sender: { id: 5, username: "duclong", full_name: "Phạm Đức Long", avatar: null },
-  },
-];
 
 function formatTime(isoString) {
   if (!isoString) return "";
@@ -102,61 +53,71 @@ function getNotificationLink(notification) {
   }
 }
 
-async function fetchNotifications() {
-  // TODO: return fetchAPI('/notifications');
-  return MOCK_NOTIFICATIONS.map((n) => ({ ...n }));
-}
-
-async function markNotificationRead(id) {
-  // TODO: return fetchAPI(`/notifications/${id}/read`, { method: 'PATCH' });
-  return { id, ok: true };
-}
-
-async function markAllNotificationsRead() {
-  // TODO: return fetchAPI('/notifications/read-all', { method: 'PATCH' });
-  return { ok: true };
-}
-
 export default function Notification() {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState("all"); // all | unread
+  const [filter, setFilter] = useState("all");
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     let active = true;
-    fetchNotifications()
-      .then((data) => {
+
+    getNotifications()
+      .then(({ items, unreadCount: count }) => {
         if (!active) return;
-        setNotifications(Array.isArray(data) ? data : []);
+        setNotifications(items);
+        setUnreadCount(count);
+        setError("");
+      })
+      .catch((err) => {
+        if (active) setError(err.message || "Không thể tải thông báo.");
       })
       .finally(() => {
         if (active) setLoading(false);
       });
+
     return () => {
       active = false;
     };
   }, []);
-
-  const unreadCount = useMemo(
-    () => notifications.filter((n) => !n.is_read).length,
-    [notifications]
-  );
-
   const visibleNotifications = useMemo(() => {
     if (filter === "unread") return notifications.filter((n) => !n.is_read);
     return notifications;
   }, [notifications, filter]);
 
   const handleMarkRead = async (id) => {
+    const target = notifications.find((n) => n.id === id);
+    if (!target || target.is_read) return;
+
     setNotifications((prev) =>
       prev.map((n) => (n.id === id ? { ...n, is_read: 1 } : n))
     );
-    markNotificationRead(id).catch(() => {});
+    setUnreadCount((prev) => Math.max(0, prev - 1));
+
+    try {
+      await markNotificationRead(id);
+    } catch (err) {
+      setNotifications((prev) =>
+        prev.map((n) => (n.id === id ? { ...n, is_read: 0 } : n))
+      );
+      setUnreadCount((prev) => prev + 1);
+      setError(err.message || "Không thể cập nhật thông báo.");
+    }
   };
 
   const handleMarkAllRead = async () => {
+    const previous = notifications;
     setNotifications((prev) => prev.map((n) => ({ ...n, is_read: 1 })));
-    markAllNotificationsRead().catch(() => {});
+    setUnreadCount(0);
+
+    try {
+      await markAllNotificationsRead();
+    } catch (err) {
+      setNotifications(previous);
+      setUnreadCount(previous.filter((n) => !n.is_read).length);
+      setError(err.message || "Không thể cập nhật thông báo.");
+    }
   };
 
   return (
@@ -168,7 +129,9 @@ export default function Notification() {
             <div>
               <h1 className={styles.title}>Thông báo</h1>
               <p className={styles.subtitle}>
-                {unreadCount > 0 ? `${unreadCount} thông báo chưa đọc` : "Bạn đã xem hết thông báo"}
+                {unreadCount > 0
+                  ? `${unreadCount} thông báo chưa đọc`
+                  : "Bạn đã xem hết thông báo"}
               </p>
             </div>
             <div className={styles.actions}>
@@ -195,6 +158,11 @@ export default function Notification() {
                 Đánh dấu đã đọc
               </button>
             </div>
+            {error && (
+              <p className={styles.errorBanner} role="alert">
+                {error}
+              </p>
+            )}
           </header>
 
           <ul className={styles.list}>
