@@ -198,6 +198,13 @@ class AuthService {
             throw err;
         }
 
+        // Chặn tài khoản đã bị vô hiệu hóa (xóa mềm)
+        if (user.deleted_at) {
+            const err = new Error('Tài khoản của bạn đã bị vô hiệu hóa.');
+            err.status = 403;
+            throw err;
+        }
+
         // Chặn tài khoản chưa xác thực OTP
         if (!user.is_verified) {
             const err = new Error('Tài khoản chưa được xác thực email. Vui lòng nhập mã OTP để kích hoạt!');
@@ -230,8 +237,8 @@ class AuthService {
         };
     }
 
-    // 5. NGHIỆP VỤ LẤY THÔNG TIN PROFILE
-    async getProfile(targetUserId) {
+    // 5. NGHIỆP VỤ LẤY THÔNG TIN PROFILE (TÍCH HỢP TRẠNG THÁI GRAPH)
+    async getProfile(targetUserId, viewerId = null) {
         const id = parseInt(targetUserId, 10);
         if (isNaN(id) || id <= 0) {
             const err = new Error('ID người dùng không hợp lệ!');
@@ -243,19 +250,101 @@ class AuthService {
         req.input('id', sql.Int, id);
         const res = await req.query(`
             SELECT 
-                u.id, u.username, u.full_name, u.email, u.avatar, u.bio, u.is_verified,
-                (SELECT COUNT(*) FROM posts WHERE user_id = u.id) AS posts_count,
-                (SELECT COUNT(*) FROM follows WHERE following_id = u.id) AS followers_count,
-                (SELECT COUNT(*) FROM follows WHERE follower_id = u.id) AS following_count
+                u.id, u.username, u.full_name, u.email, u.avatar, u.cover, u.bio, u.is_verified, u.created_at,
+                (SELECT COUNT(*) FROM posts WHERE user_id = u.id) AS posts_count
             FROM users u
-            WHERE u.id = @id
+            WHERE u.id = @id AND u.deleted_at IS NULL
         `);
         const user = res.recordset[0];
         if (!user) {
-            const err = new Error('Không tìm thấy người dùng!');
+            const err = new Error('Không tìm thấy người dùng hoặc tài khoản đã bị vô hiệu hóa!');
             err.status = 404;
             throw err;
         }
+
+        // 1. Đếm Followers qua Graph MATCH
+        const reqFollowers = new sql.Request();
+        reqFollowers.input('id', sql.Int, id);
+        const resFollowers = await reqFollowers.query(`
+            SELECT COUNT(*) AS followers_count
+            FROM users u1, follows f, users u2
+            WHERE MATCH(u1-(f)->u2) AND u2.id = @id AND u1.deleted_at IS NULL
+        `);
+        user.followers_count = resFollowers.recordset[0]?.followers_count || 0;
+
+        // 2. Đếm Following qua Graph MATCH
+        const reqFollowing = new sql.Request();
+        reqFollowing.input('id', sql.Int, id);
+        const resFollowing = await reqFollowing.query(`
+            SELECT COUNT(*) AS following_count
+            FROM users u1, follows f, users u2
+            WHERE MATCH(u1-(f)->u2) AND u1.id = @id AND u2.deleted_at IS NULL
+        `);
+        user.following_count = resFollowing.recordset[0]?.following_count || 0;
+
+        // 3. Đếm Bạn bè qua Graph MATCH
+        const reqFriends = new sql.Request();
+        reqFriends.input('id', sql.Int, id);
+        const resFriends = await reqFriends.query(`
+            SELECT COUNT(*) AS friends_count
+            FROM users u1, friends_with f, users u2
+            WHERE MATCH(u1-(f)->u2) AND u1.id = @id AND u2.deleted_at IS NULL
+        `);
+        user.friends_count = resFriends.recordset[0]?.friends_count || 0;
+
+        // 4. Nếu có viewerId và viewerId !== targetId -> Tính toán relationship
+        const parsedViewerId = viewerId ? parseInt(viewerId, 10) : null;
+        if (parsedViewerId && parsedViewerId !== id) {
+            // Kiểm tra is_following
+            const reqIsFollow = new sql.Request();
+            reqIsFollow.input('viewerId', sql.Int, parsedViewerId);
+            reqIsFollow.input('targetId', sql.Int, id);
+            const resIsFollow = await reqIsFollow.query(`
+                SELECT COUNT(*) AS cnt
+                FROM users u1, follows f, users u2
+                WHERE MATCH(u1-(f)->u2) AND u1.id = @viewerId AND u2.id = @targetId
+            `);
+            const isFollowing = (resIsFollow.recordset[0]?.cnt || 0) > 0;
+
+            // Kiểm tra friendship_status
+            const reqFriendship = new sql.Request();
+            reqFriendship.input('u1', sql.Int, parsedViewerId);
+            reqFriendship.input('u2', sql.Int, id);
+            const resFriendship = await reqFriendship.query(`
+                SELECT requester_id, receiver_id, status
+                FROM friend_requests
+                WHERE (requester_id = @u1 AND receiver_id = @u2)
+                   OR (requester_id = @u2 AND receiver_id = @u1)
+            `);
+            let friendshipStatus = 'NONE';
+            let isRequester = false;
+            if (resFriendship.recordset.length > 0) {
+                const fr = resFriendship.recordset[0];
+                friendshipStatus = fr.status;
+                isRequester = fr.requester_id === parsedViewerId;
+            }
+
+            // Tính số bạn chung qua Graph MATCH
+            const reqMutual = new sql.Request();
+            reqMutual.input('viewerId', sql.Int, parsedViewerId);
+            reqMutual.input('targetId', sql.Int, id);
+            const resMutual = await reqMutual.query(`
+                SELECT COUNT(DISTINCT mutual.id) AS mutual_count
+                FROM users u1, friends_with f1, users mutual, friends_with f2, users u2
+                WHERE MATCH(u1-(f1)->mutual-(f2)->u2)
+                  AND u1.id = @viewerId AND u2.id = @targetId
+                  AND mutual.deleted_at IS NULL
+            `);
+            const mutualFriendsCount = resMutual.recordset[0]?.mutual_count || 0;
+
+            user.relationship = {
+                is_following: isFollowing,
+                friendship_status: friendshipStatus,
+                is_requester: isRequester,
+                mutual_friends_count: mutualFriendsCount
+            };
+        }
+
         return user;
     }
 
@@ -302,6 +391,82 @@ class AuthService {
             message: 'Cập nhật ảnh đại diện thành công!',
             avatar: avatarUrl
         };
+    }
+
+    // 8. NGHIỆP VỤ CẬP NHẬT ẢNH BÌA (COVER PHOTO)
+    async updateCover(userId, file) {
+        if (!file) {
+            const err = new Error('Vui lòng chọn một file ảnh bìa hợp lệ!');
+            err.status = 400;
+            throw err;
+        }
+
+        const coverUrl = `/uploads/${file.filename}`;
+        const req = new sql.Request();
+        req.input('id', sql.Int, userId);
+        req.input('cover', sql.NVarChar, coverUrl);
+        await req.query(`UPDATE users SET cover = @cover WHERE id = @id`);
+
+        return {
+            message: 'Cập nhật ảnh bìa thành công!',
+            cover: coverUrl
+        };
+    }
+
+    // 9. NGHIỆP VỤ ĐỔI MẬT KHẨU
+    async changePassword(userId, { old_password, new_password }) {
+        if (!old_password || !new_password) {
+            const err = new Error('Vui lòng nhập đầy đủ mật khẩu cũ và mật khẩu mới!');
+            err.status = 400;
+            throw err;
+        }
+
+        if (new_password.length < 6) {
+            const err = new Error('Mật khẩu mới phải có ít nhất 6 ký tự!');
+            err.status = 400;
+            throw err;
+        }
+
+        if (old_password === new_password) {
+            const err = new Error('Mật khẩu mới không được trùng với mật khẩu cũ!');
+            err.status = 400;
+            throw err;
+        }
+
+        const reqUser = new sql.Request();
+        reqUser.input('id', sql.Int, userId);
+        const resUser = await reqUser.query('SELECT password FROM users WHERE id = @id');
+        const user = resUser.recordset[0];
+
+        if (!user) {
+            const err = new Error('Không tìm thấy tài khoản người dùng!');
+            err.status = 404;
+            throw err;
+        }
+
+        const isMatch = await bcrypt.compare(old_password, user.password);
+        if (!isMatch) {
+            const err = new Error('Mật khẩu hiện tại không chính xác!');
+            err.status = 400;
+            throw err;
+        }
+
+        const hashedPassword = await bcrypt.hash(new_password, 10);
+        const reqUpdate = new sql.Request();
+        reqUpdate.input('id', sql.Int, userId);
+        reqUpdate.input('password', sql.VarChar, hashedPassword);
+        await reqUpdate.query('UPDATE users SET password = @password WHERE id = @id');
+
+        return { message: 'Đổi mật khẩu thành công! Vui lòng đăng nhập lại với mật khẩu mới.' };
+    }
+
+    // 10. NGHIỆP VỤ VÔ HIỆU HÓA TÀI KHOẢN (SOFT DELETE)
+    async softDeleteAccount(userId) {
+        const req = new sql.Request();
+        req.input('id', sql.Int, userId);
+        await req.query('UPDATE users SET deleted_at = GETDATE() WHERE id = @id');
+
+        return { message: 'Tài khoản của bạn đã được vô hiệu hóa thành công.' };
     }
 }
 

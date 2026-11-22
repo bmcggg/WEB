@@ -8,6 +8,7 @@ const multer = require('multer');
 const { HttpError } = require('./utils/postValidation');
 const authRoutes = require('./routes/auth');
 const postRoutes = require('./routes/posts');
+const socialRoutes = require('./routes/social');
 
 function createApp() {
     const app = express();
@@ -28,6 +29,7 @@ function createApp() {
 
     app.use('/api/auth', authRoutes);
     app.use('/api/posts', postRoutes);
+    app.use('/api/social', socialRoutes);
     app.use('/api', (req, res) => res.status(404).json({ error: 'Khong tim thay API.' }));
     app.use('/uploads', express.static(path.join(__dirname, 'public/uploads'), { dotfiles: 'deny' }));
 

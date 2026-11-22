@@ -1,4 +1,4 @@
--- Bảng 1: USERS
+-- Bảng 1: USERS (GRAPH NODE TABLE)
 CREATE TABLE users (
     id INT IDENTITY(1,1) PRIMARY KEY,
     username NVARCHAR(50) NOT NULL UNIQUE,
@@ -6,11 +6,13 @@ CREATE TABLE users (
     password NVARCHAR(255) NOT NULL,
     full_name NVARCHAR(100) NOT NULL,
     avatar NVARCHAR(MAX),
+    cover NVARCHAR(MAX),
     bio NVARCHAR(MAX),
     role NVARCHAR(20) CHECK(role IN ('ADMIN', 'USER')) DEFAULT 'USER',
     is_verified BIT DEFAULT 0,
+    deleted_at DATETIME2 NULL,
     created_at DATETIME2 DEFAULT GETDATE()
-);
+) AS NODE;
 
 -- Bảng 2: POSTS
 CREATE TABLE posts (
@@ -45,15 +47,28 @@ CREATE TABLE reactions (
     FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE NO ACTION
 );
 
--- Bảng 5: FOLLOWS
+-- Bảng 5: FOLLOWS (GRAPH EDGE TABLE)
 CREATE TABLE follows (
-    follower_id INT NOT NULL,
-    following_id INT NOT NULL,
+    created_at DATETIME2 DEFAULT GETDATE()
+) AS EDGE;
+
+-- Bảng 5.1: FRIENDS_WITH (GRAPH EDGE TABLE)
+CREATE TABLE friends_with (
+    since DATETIME2 DEFAULT GETDATE()
+) AS EDGE;
+
+-- Bảng 5.2: FRIEND_REQUESTS (TIẾN TRÌNH LỜI MỜI KẾT BẠN)
+CREATE TABLE friend_requests (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    requester_id INT NOT NULL,
+    receiver_id INT NOT NULL,
+    status NVARCHAR(20) NOT NULL CHECK(status IN ('PENDING', 'ACCEPTED', 'REJECTED')),
     created_at DATETIME2 DEFAULT GETDATE(),
-    PRIMARY KEY (follower_id, following_id),
-    CHECK (follower_id <> following_id),
-    FOREIGN KEY (follower_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (following_id) REFERENCES users(id) ON DELETE NO ACTION
+    updated_at DATETIME2 DEFAULT GETDATE(),
+    CHECK (requester_id <> receiver_id),
+    CONSTRAINT UQ_friend_req_dir UNIQUE (requester_id, receiver_id),
+    FOREIGN KEY (requester_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE NO ACTION
 );
 
 -- Bảng 6: SHARES
@@ -140,7 +155,7 @@ CREATE TABLE comment_media (
 -- Bảng 14: NOTIFICATIONS
 CREATE TABLE notifications (
     id INT IDENTITY(1,1) PRIMARY KEY,
-    type NVARCHAR(20) CHECK(type IN ('REACTED','COMMENTED','FOLLOWED','MESSAGED')) NOT NULL,
+    type NVARCHAR(20) CHECK(type IN ('REACTED','COMMENTED','FOLLOWED','MESSAGED','FRIEND_REQUEST','FRIEND_ACCEPTED')) NOT NULL,
     sender_id INT NOT NULL,
     receiver_id INT NOT NULL,
     post_id INT,

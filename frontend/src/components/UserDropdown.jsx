@@ -4,7 +4,14 @@ import styles from "./userDropdown.module.css";
 import { assetUrl } from "../services/api";
 import { getTheme, toggleTheme } from "../utils/theme";
 
-export default function UserDropdown({ user, isOpen, onClose, onLogoutClick }) {
+export default function UserDropdown({
+  user,
+  isOpen,
+  onClose,
+  onLogoutClick,
+  onChangePassClick,
+  onDeactivateClick,
+}) {
   const dropdownRef = useRef(null);
   const [theme, setCurrentTheme] = useState(getTheme());
   const navigate = useNavigate();
@@ -102,6 +109,34 @@ export default function UserDropdown({ user, isOpen, onClose, onLogoutClick }) {
       >
         <div className={styles.iconCircle}>⚙️</div>
         <span className={styles.menuLabel}>Cài đặt & quyền riêng tư</span>
+      </div>
+
+      {/* MỤC ĐỔI MẬT KHẨU */}
+      <div
+        className={styles.menuItem}
+        onClick={() => {
+          onClose();
+          if (onChangePassClick) onChangePassClick();
+        }}
+        role="button"
+        tabIndex={0}
+      >
+        <div className={styles.iconCircle}>🔑</div>
+        <span className={styles.menuLabel}>Đổi mật khẩu</span>
+      </div>
+
+      {/* MỤC VÔ HIỆU HÓA TÀI KHOẢN */}
+      <div
+        className={styles.menuItem}
+        onClick={() => {
+          onClose();
+          if (onDeactivateClick) onDeactivateClick();
+        }}
+        role="button"
+        tabIndex={0}
+      >
+        <div className={styles.iconCircle}>⚠️</div>
+        <span className={styles.menuLabel}>Vô hiệu hóa tài khoản</span>
       </div>
 
       <div className={styles.divider} />

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import styles from "./navbar.module.css";
-import { assetUrl, readUser, logoutAPI } from "../services/api";
+import { assetUrl, readUser, logoutAPI, fetchAPI } from "../services/api";
 import NoticeModal from "./NoticeModal";
 import UserDropdown from "./UserDropdown";
+import ChangePasswordModal from "./ChangePasswordModal";
 import FellaLogo from "./FellaLogo";
 import { getTheme, toggleTheme } from "../utils/theme";
 
@@ -14,6 +15,7 @@ export default function Navbar() {
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [theme, setAppTheme] = useState(getTheme());
   const [searchQuery, setSearchQuery] = useState("");
+  const [isChangePassOpen, setIsChangePassOpen] = useState(false);
   const [modal, setModal] = useState({
     isOpen: false,
     type: "info",
@@ -57,6 +59,59 @@ export default function Navbar() {
           onConfirm: () => navigate("/login"),
         });
         setTimeout(() => navigate("/login"), 1000);
+      },
+    });
+  };
+
+  const handleChangePasswordSuccess = () => {
+    setIsChangePassOpen(false);
+    setModal({
+      isOpen: true,
+      type: "success",
+      title: "Đổi mật khẩu thành công!",
+      message: "Vui lòng đăng nhập lại với mật khẩu mới.",
+      confirmText: "Đăng nhập ngay",
+      cancelText: null,
+      onConfirm: () => {
+        logoutAPI();
+        navigate("/login");
+      },
+    });
+  };
+
+  const handleDeactivateClick = () => {
+    setModal({
+      isOpen: true,
+      type: "error",
+      title: "Vô hiệu hóa tài khoản",
+      message: "Bạn có chắc chắn muốn vô hiệu hóa tài khoản của mình không? Hành động này sẽ khóa tài khoản cho đến khi được kích hoạt lại.",
+      confirmText: "Vô hiệu hóa",
+      cancelText: "Hủy",
+      onConfirm: async () => {
+        try {
+          await fetchAPI("/auth/account", { method: "DELETE" });
+          localStorage.removeItem("fella_user");
+          localStorage.removeItem("fella_token");
+          setModal({
+            isOpen: true,
+            type: "success",
+            title: "Đã vô hiệu hóa tài khoản",
+            message: "Tài khoản của bạn đã được vô hiệu hóa thành công.",
+            confirmText: "OK",
+            cancelText: null,
+            onConfirm: () => navigate("/login"),
+          });
+          setTimeout(() => navigate("/login"), 1200);
+        } catch (err) {
+          setModal({
+            isOpen: true,
+            type: "error",
+            title: "Lỗi",
+            message: err.message || "Không thể vô hiệu hóa tài khoản.",
+            confirmText: "Đóng",
+            cancelText: null,
+          });
+        }
       },
     });
   };
@@ -136,10 +191,19 @@ export default function Navbar() {
               isOpen={isDropdownOpen}
               onClose={() => setIsDropdownOpen(false)}
               onLogoutClick={handleLogoutClick}
+              onChangePassClick={() => setIsChangePassOpen(true)}
+              onDeactivateClick={handleDeactivateClick}
             />
           </div>
         </div>
       </header>
+
+      {/* MODAL ĐỔI MẬT KHẨU */}
+      <ChangePasswordModal
+        isOpen={isChangePassOpen}
+        onClose={() => setIsChangePassOpen(false)}
+        onSuccess={handleChangePasswordSuccess}
+      />
 
       {/* HỘP THOẠI POPUP THÔNG BÁO XÁC NHẬN ĐĂNG XUẤT */}
       <NoticeModal

@@ -16,5 +16,8 @@ router.get('/profile/:id', (req, res) => authController.getProfile(req, res));
 // --- Protected Routes (Bắt buộc token xác thực, chống IDOR) ---
 router.put('/profile', authenticate, (req, res) => authController.updateProfile(req, res));
 router.post('/update-avatar', authenticate, upload.single('avatar'), (req, res) => authController.updateAvatar(req, res));
+router.post('/update-cover', authenticate, upload.single('cover'), (req, res) => authController.updateCover(req, res));
+router.post('/change-password', authenticate, (req, res) => authController.changePassword(req, res));
+router.delete('/account', authenticate, (req, res) => authController.deleteAccount(req, res));
 
 module.exports = router;
