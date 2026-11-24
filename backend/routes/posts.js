@@ -13,6 +13,7 @@ router.get('/:id/media/:mediaId', controller.getMedia);
 router.get('/:id', controller.getPost);
 router.patch('/:id', controller.updatePost);
 router.delete('/:id', controller.deletePost);
+router.post('/:id/share', controller.sharePost);
 router.post('/:id/save', controller.savePost);
 router.delete('/:id/save', controller.unsavePost);
 

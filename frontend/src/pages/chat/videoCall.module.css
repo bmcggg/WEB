@@ -1,0 +1,38 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr));
+  gap: 12px;
+}
+
+.tile {
+  margin: 0;
+  min-width: 0;
+}
+
+.tile video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
+  border-radius: 8px;
+  background: #182235;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.actions button,
+.callButton {
+  padding: 7px 12px;
+  border: 1px solid #9aaaca;
+  border-radius: 8px;
+}
+
+.notice {
+  padding: 6px 16px;
+  margin: 0;
+}

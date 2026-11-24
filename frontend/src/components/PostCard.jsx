@@ -5,7 +5,7 @@ import styles from './PostCard.module.css';
 import Comment from './Comment'
 import Reaction from './Reaction'
 
-export default function PostCard({ post, currentUser, onSaveToggle, onEdit, onDelete, onOpenDetail, busy = false }) {
+export default function PostCard({ post, currentUser, onSaveToggle, onEdit, onDelete, onShare, onOpenDetail, busy = false }) {
   const owned = Number(currentUser?.id) === post.user_id;
   const name = post.full_name || post.username || 'Người dùng';
   return (
@@ -30,6 +30,17 @@ export default function PostCard({ post, currentUser, onSaveToggle, onEdit, onDe
       <div className={styles.mediaGrid}>
         {(post.media || []).map((media) => <PostMedia key={media.id} media={media} />)}
       </div>
+      {post.shared_from_id && <blockquote className={styles.sharedOriginal}>
+        {post.shared_post ? <>
+          <Link to={'/profile?id=' + post.shared_post.user_id}>
+            {post.shared_post.full_name || post.shared_post.username}
+          </Link>
+          <p className={styles.postContent}>{post.shared_post.content}</p>
+          <div className={styles.mediaGrid}>
+            {post.shared_post.media.map((media) => <PostMedia key={media.id} media={media} />)}
+          </div>
+        </> : <p>Bài viết gốc không còn khả dụng.</p>}
+      </blockquote>}
       <div className="px-4 py-2 border-t">
         <Reaction  targetType="post" postId={post.id} currentUser={currentUser} />
       </div>
@@ -37,6 +48,8 @@ export default function PostCard({ post, currentUser, onSaveToggle, onEdit, onDe
       <div className={styles.actions}>
         {onOpenDetail && <button onClick={() => onOpenDetail(post)}>Xem chi tiết</button>}
         {onSaveToggle && <button disabled={busy} aria-pressed={post.is_saved} onClick={() => onSaveToggle(post)}>{post.is_saved ? 'Bỏ lưu' : 'Lưu bài'}</button>}
+        {onShare && post.privacy === 'PUBLIC' && !post.shared_from_id &&
+          <button disabled={busy} onClick={() => onShare(post)}>Chia sẻ</button>}
         {owned && onEdit && <button disabled={busy} onClick={() => onEdit(post)}>Sửa</button>}
         {owned && onDelete && <button disabled={busy} className={styles.danger} onClick={() => onDelete(post)}>Xóa</button>}
       </div>

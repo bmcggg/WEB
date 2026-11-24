@@ -5,6 +5,7 @@ import Feed from "./pages/feed/Feed";
 import Profile from "./pages/profile/Profile";
 import SavedPosts from "./pages/feed/SavedPosts";
 import SessionGuard from "./components/SessionGuard";
+import Search from './pages/Search';
 import Chat from "./pages/chat/Chat";
 import Notification from "./pages/Notification/Notification";
 
@@ -18,6 +19,7 @@ export default function App() {
         <Route path="/feed" element={<SessionGuard><Feed /></SessionGuard>} />
         <Route path="/profile" element={<SessionGuard><Profile /></SessionGuard>} />
         <Route path="/saved" element={<SessionGuard><SavedPosts /></SessionGuard>} />
+        <Route path="/search" element={<SessionGuard><Search /></SessionGuard>} />
         <Route path="/chat" element={<SessionGuard><Chat /></SessionGuard>} />
         <Route path="/notifications" element={<SessionGuard><Notification /></SessionGuard>} />
         <Route path="*" element={<Navigate to="/login" replace />} />
