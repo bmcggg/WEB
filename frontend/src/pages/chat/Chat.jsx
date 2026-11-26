@@ -1,3 +1,6 @@
+import useVideoCall from './useVideoCall';
+import VideoCallDialog from './VideoCallDialog';
+import videoStyles from './videoCall.module.css';
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Navbar from "../../components/NavBar";
 import { assetUrl, readUser } from "../../services/api";
@@ -69,6 +72,7 @@ export default function Chat() {
   const [users, setUsers] = useState([]);
   const [searchingUsers, setSearchingUsers] = useState(false);
   const [startingUserId, setStartingUserId] = useState(null);
+  const videoCall = useVideoCall();
   const messagesEndRef = useRef(null);
 
   const applyConversations = useCallback((list) => {
@@ -256,6 +260,14 @@ export default function Chat() {
   return (
     <>
       <Navbar />
+      {videoCall.call.phase === 'idle' && videoCall.error && <p role="status" className={videoStyles.notice}>{videoCall.error}</p>}
+      {videoCall.call.phase !== 'idle' && <VideoCallDialog
+        call={videoCall.call}
+        error={videoCall.error}
+        conversation={conversations.find((item) => item.id === videoCall.call.conversationId)}
+        onAccept={videoCall.accept}
+        onClose={videoCall.close}
+      />}
       <main className={styles.page}>
         <div className={styles.shell}>
           <aside
@@ -421,6 +433,14 @@ export default function Chat() {
                       {selectedConversation.type === "GROUP" ? "Nhóm trò chuyện" : "Trò chuyện trực tiếp"}
                     </div>
                   </div>
+                  <button
+                    type="button"
+                    className={videoStyles.callButton}
+                    disabled={!videoCall.online || videoCall.call.phase !== 'idle'}
+                    onClick={() => videoCall.start(selectedConversation.id)}
+                  >
+                    Gọi video
+                  </button>
                 </header>
 
                 <div className={styles.messages}>

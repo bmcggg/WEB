@@ -18,6 +18,15 @@ export default function Navbar({ compact = false }) {
         Fella
       </Link>
 
+      <form className={styles.search} role="search" onSubmit={(event) => {
+        event.preventDefault();
+        const query = new FormData(event.currentTarget).get('q').trim();
+        if (query) navigate('/search?' + new URLSearchParams({ q: query }));
+      }}>
+        <input type="search" name="q" aria-label="Tìm người dùng hoặc bài viết" placeholder="Tìm kiếm trên Fella" maxLength={100} required />
+        <button type="submit">Tìm</button>
+      </form>
+
       <div className={styles.userInfo}>
         <Link to="/saved" className={styles.userProfileLink}>Đã lưu</Link>
         <Link to="/chat" className={styles.chatLink}>Trò chuyện</Link>

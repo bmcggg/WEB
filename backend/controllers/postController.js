@@ -42,6 +42,15 @@ class PostController {
         res.status(201).json({ postId: post.id, data: post });
     }
 
+    async sharePost(req, res) {
+        const caption = req.body?.caption === undefined ? '' : req.body.caption;
+        if (typeof caption !== 'string' || caption.length > 10000) {
+            throw new HttpError(400, 'Caption toi da 10000 ky tu.');
+        }
+        const post = await postService.sharePost(positiveInteger(req.params.id, 'Post ID'), req.user.id, caption.trim());
+        res.status(201).json({ postId: post.id, data: post });
+    }
+
     async updatePost(req, res) {
         const input = postInput(req.body, { patch: true });
         res.json({ data: await postService.updatePost(positiveInteger(req.params.id, 'Post ID'), req.user.id, input) });

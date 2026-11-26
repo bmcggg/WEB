@@ -218,4 +218,49 @@ test('SQL Server integration: real HTTP, two users, media, privacy and transacti
         assert.equal((await call('/posts/' + other.data.postId, { token: alice.token, method: 'DELETE' })).status, 200);
         await assert.rejects(fs.access(path.join(storage, key)), { code: 'ENOENT' });
     });
+
+    await context.test('search and sharing respect post visibility', async () => {
+        const keyword = 'tìm_kiếm_%_' + suffix;
+        const created = await call('/posts', { token: alice.token, method: 'POST', json: { content: keyword } });
+        assert.equal(created.status, 201);
+        const originalId = created.data.postId;
+        const originalPath = '/posts/' + originalId;
+        const searchPath = '/search/posts?' + new URLSearchParams({ q: keyword, limit: 1 });
+        const usersPath = '/search/users?' + new URLSearchParams({ q: alice.user.username });
+        const users = await call(usersPath, { token: bob.token });
+        assert.equal(users.status, 200);
+        assert.deepEqual(users.data.data.map((user) => user.id), [alice.user.id]);
+        assert.equal(users.data.data[0].email, undefined);
+        assert.equal((await call(searchPath)).status, 401);
+        assert.equal((await call('/search/posts?q=&q=duplicate', { token: bob.token })).status, 400);
+        assert.equal((await call(searchPath, { token: bob.token })).data.data[0].id, originalId);
+
+        const share = (caption) => call(originalPath + '/share', {
+            token: bob.token, method: 'POST', json: { caption },
+        });
+        assert.equal((await share(123)).status, 400);
+        const emptyShare = await share('');
+        assert.equal(emptyShare.status, 201);
+        const shared = await share(' Cảm nghĩ ');
+        assert.equal(shared.status, 201);
+        assert.equal(shared.data.data.content, 'Cảm nghĩ');
+        const shareId = shared.data.postId;
+        const profile = await call('/posts/user/' + bob.user.id, { token: alice.token });
+        const onProfile = profile.data.data.find((post) => post.id === shareId);
+        assert.equal(onProfile.shared_post.id, originalId);
+        const feed = await call('/posts', { token: alice.token });
+        assert.ok(feed.data.data.some((post) => post.id === shareId));
+
+        const madePrivate = await call(originalPath, { token: alice.token, method: 'PATCH', json: { privacy: 'PRIVATE' } });
+        assert.equal(madePrivate.status, 200);
+        assert.equal((await call(searchPath, { token: bob.token })).data.pagination.total, 0);
+        assert.equal((await call(searchPath, { token: alice.token })).data.pagination.total, 1);
+        assert.equal((await share('new share')).status, 404);
+        const sharePath = '/posts/' + shareId;
+        assert.equal((await call(sharePath, { token: bob.token })).data.data.shared_post, null);
+        assert.equal((await call(originalPath, { token: alice.token, method: 'DELETE' })).status, 200);
+        const afterDelete = await call(sharePath, { token: bob.token });
+        assert.equal(afterDelete.data.data.shared_post, null);
+        assert.equal(afterDelete.data.data.content, 'Cảm nghĩ');
+    });
 });

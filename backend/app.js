@@ -10,6 +10,7 @@ const commentRoutes = require('./routes/comments');
 const reactionRoutes = require('./routes/reactions');
 const storyRoutes = require('./routes/stories');
 const conversationRoutes = require('./routes/conversations');
+const searchRoutes = require('./routes/search');
 const notificationRoutes = require('./routes/notifications');
 
 function createApp() {
@@ -25,6 +26,7 @@ function createApp() {
     app.use('/api/reactions', reactionRoutes);
     app.use('/api/stories', storyRoutes);
     app.use('/api/conversations', conversationRoutes);
+    app.use('/api/search', searchRoutes);
     app.use('/api/notifications', notificationRoutes);
     app.use('/api', (req, res) => res.status(404).json({ error: 'Khong tim thay API.' }));
 
@@ -32,7 +34,7 @@ function createApp() {
     const frontend = path.join(__dirname, '../frontend/dist');
     if (fs.existsSync(path.join(frontend, 'index.html'))) {
         app.use(express.static(frontend));
-        app.get(['/', '/login', '/register', '/feed', '/profile', '/saved', '/chat', '/notifications'], (req, res) => res.sendFile(path.join(frontend, 'index.html')));
+        app.get(['/', '/login', '/register', '/feed', '/profile', '/saved', '/chat', '/notifications', '/search'], (req, res) => res.sendFile(path.join(frontend, 'index.html')));
     }
     app.use((error, req, res, next) => {
         if (res.headersSent) return next(error);

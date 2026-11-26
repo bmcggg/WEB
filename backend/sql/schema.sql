@@ -16,6 +16,7 @@ CREATE TABLE posts (
     id INT IDENTITY(1,1) PRIMARY KEY,
     user_id INT NOT NULL,
     content NVARCHAR(MAX),
+    shared_from_id INT NULL,
     privacy NVARCHAR(20) CHECK(privacy IN ('PUBLIC', 'FRIENDS', 'PRIVATE')) DEFAULT 'PUBLIC',
     created_at DATETIME2 DEFAULT GETDATE(),
     updated_at DATETIME2 DEFAULT GETDATE(),

@@ -1,5 +1,7 @@
 .navbar {
   display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
   justify-content: space-between;
   align-items: center;
   padding: 10px 20px;
@@ -81,7 +83,20 @@
 .logo:focus-visible, .userProfileLink:focus-visible, .btnLogout:focus-visible { outline: 3px solid #1877f2; outline-offset: 3px; }
 @media (max-width: 480px) {
   .navbar { padding: 10px 12px; }
-  .userInfo { gap: 8px; }
+  .userInfo { gap: 8px; flex-wrap: wrap; }
   .userName { display: none; }
   .btnLogout { padding: 8px; }
+}
+
+.search {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+.search input {
+  max-width: 100%;
+  padding: 6px 8px;
+  border: 1px solid #c8d0dc;
+  border-radius: 6px;
 }

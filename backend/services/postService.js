@@ -2,7 +2,7 @@ const { sql } = require('../config/database');
 const { HttpError } = require('../utils/postValidation');
 
 const visible = "(p.privacy = 'PUBLIC' OR p.user_id = @viewer)";
-const columns = `p.id, p.user_id, p.content, p.privacy, p.created_at, p.updated_at,
+const columns = `p.id, p.user_id, p.content, p.privacy, p.shared_from_id, p.created_at, p.updated_at,
     u.username, u.full_name, u.avatar,
     CAST(CASE WHEN EXISTS (SELECT 1 FROM saved_posts sp WHERE sp.post_id = p.id AND sp.user_id = @viewer) THEN 1 ELSE 0 END AS BIT) AS is_saved`;
 
@@ -14,6 +14,28 @@ function attachMedia(posts, media) {
         grouped.set(item.post_id, values);
     }
     return posts.map((post) => ({ ...post, is_saved: Boolean(post.is_saved), media: grouped.get(post.id) || [] }));
+}
+
+async function withSharedOriginals(posts, request) {
+    const ids = [...new Set(posts.map((post) => post.shared_from_id).filter(Boolean))];
+    if (!ids.length) return posts;
+    const parameters = ids.map((id, index) => {
+        request.input('original' + index, sql.Int, id);
+        return '@original' + index;
+    }).join(', ');
+    const result = await request.query(`
+        SELECT p.id, p.user_id, p.content, u.username, u.full_name
+        FROM posts p JOIN users u ON u.id = p.user_id
+        WHERE p.id IN (${parameters}) AND p.privacy = 'PUBLIC';
+        SELECT pm.id, pm.post_id, pm.media_type, pm.display_order
+        FROM post_media pm JOIN posts p ON p.id = pm.post_id
+        WHERE p.id IN (${parameters}) AND p.privacy = 'PUBLIC'
+        ORDER BY pm.display_order, pm.id;
+    `);
+    const originals = new Map(attachMedia(result.recordsets[0], result.recordsets[1]).map((post) => [post.id, post]));
+    return posts.map((post) => post.shared_from_id
+        ? { ...post, shared_post: originals.get(post.shared_from_id) || null }
+        : post);
 }
 
 async function transaction(work) {
@@ -33,7 +55,7 @@ async function transaction(work) {
 
 async function lockPost(unit, postId) {
     const result = await new sql.Request(unit).input('id', sql.Int, postId).query(
-        'SELECT id, user_id, content, privacy FROM posts WITH (UPDLOCK, HOLDLOCK) WHERE id = @id'
+        'SELECT id, user_id, content, privacy, shared_from_id FROM posts WITH (UPDLOCK, HOLDLOCK) WHERE id = @id'
     );
     if (!result.recordset.length) throw new HttpError(404, 'Khong tim thay bai viet.');
     return result.recordset[0];
@@ -44,7 +66,7 @@ function requireOwner(post, viewer) {
 }
 
 class PostService {
-    async list(viewer, { page, limit, offset }, { userId, saved = false } = {}) {
+    async list(viewer, { page, limit, offset }, { userId, saved = false, query } = {}) {
         const request = new sql.Request().input('viewer', sql.Int, viewer)
             .input('limit', sql.Int, limit).input('offset', sql.Int, offset);
         let filter = visible;
@@ -53,6 +75,10 @@ class PostService {
         if (userId !== undefined) {
             request.input('userId', sql.Int, userId);
             filter += ' AND p.user_id = @userId';
+        }
+        if (query !== undefined) {
+            request.input('query', sql.NVarChar(100), query);
+            filter += ' AND CHARINDEX(@query, p.content) > 0';
         }
         if (saved) {
             joins += ' JOIN saved_posts saved ON saved.post_id = p.id AND saved.user_id = @viewer';
@@ -71,7 +97,7 @@ class PostService {
             SELECT COUNT(*) AS total FROM posts p ${joins} WHERE ${filter};
         `);
         const total = result.recordsets[2][0].total;
-        return { data: attachMedia(result.recordsets[0], result.recordsets[1]), pagination: { page, limit, total, totalPages: Math.ceil(total / limit) } };
+        return { data: await withSharedOriginals(attachMedia(result.recordsets[0], result.recordsets[1]), new sql.Request()), pagination: { page, limit, total, totalPages: Math.ceil(total / limit) } };
     }
 
     async getPost(postId, viewer, unit) {
@@ -82,7 +108,24 @@ class PostService {
             JOIN posts p ON p.id = pm.post_id WHERE p.id = @id AND ${visible} ORDER BY pm.display_order, pm.id;
         `);
         if (!result.recordsets[0].length) throw new HttpError(404, 'Khong tim thay bai viet.');
-        return attachMedia(result.recordsets[0], result.recordsets[1])[0];
+        const [post] = await withSharedOriginals(attachMedia(result.recordsets[0], result.recordsets[1]), new sql.Request(unit));
+        return post;
+    }
+
+    async sharePost(postId, viewer, caption) {
+        return transaction(async (unit) => {
+            const original = await lockPost(unit, postId);
+            if (original.privacy !== 'PUBLIC' || original.shared_from_id) {
+                throw new HttpError(404, 'Bai viet khong the chia se.');
+            }
+            const result = await new sql.Request(unit)
+                .input('viewer', sql.Int, viewer).input('original', sql.Int, postId)
+                .input('caption', sql.NVarChar(sql.MAX), caption).query(`
+                    INSERT INTO posts (user_id, content, privacy, shared_from_id)
+                    OUTPUT INSERTED.id VALUES (@viewer, @caption, 'PUBLIC', @original);
+                `);
+            return this.getPost(result.recordset[0].id, viewer, unit);
+        });
     }
 
     async createPost(viewer, input, media) {
@@ -109,7 +152,7 @@ class PostService {
             const post = await lockPost(unit, postId);
             requireOwner(post, viewer);
             const content = input.content ?? post.content ?? '';
-            if (!content.trim()) {
+            if (!content.trim() && !post.shared_from_id) {
                 const media = await new sql.Request(unit).input('id', sql.Int, postId).query('SELECT COUNT(*) AS total FROM post_media WHERE post_id = @id');
                 if (!media.recordset[0].total) throw new HttpError(400, 'Bai viet khong duoc de trong.');
             }

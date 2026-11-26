@@ -37,8 +37,12 @@ async function initDatabase() {
                 SELECT OBJECT_ID(N'dbo.users', N'U') AS table_id
             `);
 
-            if (checkTable.recordset[0].table_id !== null) 
+            if (checkTable.recordset[0].table_id !== null) {
+                await appPool.request().batch(fs.readFileSync(
+                    path.join(__dirname, '..', 'sql', 'add-shared-post.sql'), 'utf8',
+                ));
                 return;
+            }
             
             const schemaPath = path.join(__dirname, "..", "sql", "schema.sql");
             let schema = fs.readFileSync(schemaPath, "utf8");
